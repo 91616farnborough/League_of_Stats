@@ -13,24 +13,24 @@ import java.io.IOException;
 public class Client {
 
     @GET
-    @Path("client/img/{path}")
+    @Path("img/{path}")
     @Produces({"image/jpeg,image/png"})
     public byte[] getImageFile(@PathParam("path") String path) {
-        return getFile("client/img/" + path);
+        return getFile("img/" + path);
     }
 
     @GET
-    @Path("client/js/{path}")
+    @Path("js/{path}")
     @Produces({"text/javascript"})
     public byte[] getJavaScriptFile(@PathParam("path") String path) {
-        return getFile("client/js/" + path);
+        return getFile("js/" + path);
     }
 
     @GET
-    @Path("client/css/{path}")
+    @Path("css/{path}")
     @Produces({"text/css"})
     public byte[] getCSSFile(@PathParam("path") String path) {
-        return getFile("client/css/" + path);
+        return getFile("css/" + path);
     }
 
     @GET
