@@ -1,10 +1,12 @@
 package controllers;
 
+import com.sun.istack.Nullable;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import server.Main;
 
+import javax.validation.constraints.Null;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.sql.PreparedStatement;
@@ -44,14 +46,14 @@ public class Users {
     public String loginUser(@FormDataParam("username") String username, @FormDataParam("password") String password) {
         System.out.println("Invoked loginUser() on path user/login");
         try {
-            PreparedStatement ps1 = Main.db.prepareStatement("SELECT Password FROM Users WHERE Username = ?");
+            PreparedStatement ps1 = Main.db.prepareStatement("SELECT Password FROM Users WHERE UserName = ?");
             ps1.setString(1, username);
             ResultSet loginResults = ps1.executeQuery();
             if (loginResults.next() == true) {
                 String correctPassword = loginResults.getString(1);
                 if (password.equals(correctPassword)) {
                     String token = UUID.randomUUID().toString();
-                    PreparedStatement ps2 = Main.db.prepareStatement("UPDATE Users SET Token = ? WHERE Username = ?");
+                    PreparedStatement ps2 = Main.db.prepareStatement("UPDATE Users SET Token = ? WHERE UserName = ?");
                     ps2.setString(1, token);
                     ps2.setString(2, username);
                     ps2.executeUpdate();
@@ -108,17 +110,34 @@ public class Users {
                 ps2.executeUpdate();
 
                 return "{\"status\": \"OK\"}";
-            }
-            else {
+            } else {
 
                 return "{\"error\": \"Invalid token!\"}";
 
             }
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             System.out.println("Database error during /user/logout: " + exception.getMessage());
             return "{\"error\": \"Server side error!\"}";
         }
 
     }
+
+
+    @POST
+    @Path("add")
+    public String UserAdd(@FormDataParam("username") String username , @FormDataParam("password") String password) {
+        System.out.println("Invoked User.UserAdd()");
+        try {
+            PreparedStatement ps = Main.db.prepareStatement("INSERT INTO Users (UserName, Password) VALUES (?, ?)");
+            ps.setString(1, username);
+            ps.setString(2, password);
+            ps.execute();
+            return "{\"OK\": \"Added User.\"}";
+        } catch (Exception exception) {
+            System.out.println("Database error: " + exception.getMessage());
+            return "{\"Error\": \"Unable to create new item, please see server console for more info.\"}";
+        }
+
+    }
+
 }

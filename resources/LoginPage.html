@@ -23,9 +23,13 @@
                 } else {
                     Cookies.set("token", response.token);
                     Cookies.set("username", response.username);
-                    window.open("reviews.html", "_self");       //open reviews.html in same tab
+                    window.open("SearchPage.html", "_self");       //open reviews.html in same tab
                 }
             });
+        }
+
+        function openRegister(){
+            window.open("RegistryPage.html", "_self");
         }
 
     </script>
@@ -38,6 +42,6 @@
     <input type="password" name="password" id="password">
 </form>
 <button class="button" onclick='postUserLogin();'>LOGIN</button>
-
+<button color="blue" class="Regidter" onclick="openRegister()";>REGISTER</button>
 </body>
 </html>
