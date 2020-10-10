@@ -9,39 +9,58 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-@Path("/")
+/* ------------------------------------------------------------------------------
+ This class serves up the static HTML, CSS, JavaScript and images to the client.
+ You shouldn't need to change anything unless you are adding other file types.
+ ------------------------------------------------------------------------------ */
+@Path("client/")
 public class Client {
 
     @GET
     @Path("img/{path}")
     @Produces({"image/jpeg,image/png"})
     public byte[] getImageFile(@PathParam("path") String path) {
-        return getFile("img/" + path);
+        return getFile("client/img/" + path);
     }
 
     @GET
     @Path("js/{path}")
     @Produces({"text/javascript"})
     public byte[] getJavaScriptFile(@PathParam("path") String path) {
-        return getFile("js/" + path);
+        return getFile("client/js/" + path);
+    }
+
+    @GET
+    @Path("lib/{path}")
+    @Produces({"text/javascript"})
+    public byte[] getJavaScriptLibraryFile(@PathParam("path") String path) {
+        return getFile("client/lib/" + path);
     }
 
     @GET
     @Path("css/{path}")
     @Produces({"text/css"})
     public byte[] getCSSFile(@PathParam("path") String path) {
-        return getFile("css/" + path);
+        return getFile("client/css/" + path);
     }
 
     @GET
     @Path("{path}")
     @Produces({"text/html"})
     public byte[] getIHTMLFile(@PathParam("path") String path) {
-        return getFile(path);
+        return getFile("client/" + path);
     }
 
-    private byte[] getFile(String filename) {
+    @GET
+    @Path("client/favicon.ico")
+    @Produces({"image/x-icon"})
+    public byte[] getFavicon() {
+        return getFile("client/favicon.ico");
+    }
+
+    private static byte[] getFile(String filename) {
         try {
+
             File file = new File("resources/" + filename);
             byte[] fileData = new byte[(int) file.length()];
             DataInputStream dis = new DataInputStream(new FileInputStream(file));
