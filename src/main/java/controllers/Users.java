@@ -135,7 +135,7 @@ public class Users {
             return "{\"OK\": \"Added User.\"}";
         } catch (Exception exception) {
             System.out.println("Database error: " + exception.getMessage());
-            return "{\"Error\": \"Unable to create new item, please see server console for more info.\"}";
+            return "{\"Error\": \"UserName already taken\"}";
         }
 
     }
