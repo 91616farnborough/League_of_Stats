@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registry</title>
+    <script>
+        "use strict";
+
+        function UserAdd() {
+                console.log("Invoked UserAdd()");
+
+                var formData = new FormData(document.getElementById('RegistryForm'));
+                var url = "/User/add";
+
+                fetch(url, {
+                    method: "POST",
+                    body: formData,
+                }).then(response => {
+                    return response.json()
+                }).then(response => {
+                    if (response.hasOwnProperty("Error")) {   //checks if response from server has a key "Error"
+                    alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
+                } else {
+                    window.open("login.html", "_self");   //if not open this page (for example!)
+                }
+            });
+
+        }
+
+
+        function openLoginPage(){
+            window.open("login.html", "_self");
+        }
+
+    </script>
+</head>
+<body>
+
+<form id="RegistryForm">
+    <input type="text" name="username" id="username">
+    <input type="password" name="password" id="password">
+</form>
+<button class="Confirm" onclick='UserAdd();'>Create new user</button>
+<button color="blue" class="Cancel" onclick="openLoginPage()";>Cancel</button>
+</body>
+</html>
