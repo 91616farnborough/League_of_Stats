@@ -1,34 +1,46 @@
 package controllers;
 
+import com.sun.istack.Nullable;
+import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import server.Main;
+
+import javax.validation.constraints.Null;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.UUID;
+
+@Path("Champions/")
+@Consumes(MediaType.MULTIPART_FORM_DATA)
+@Produces(MediaType.APPLICATION_JSON)
+
 public class Champions {
-    package controllers;
 
-    @Path("food/")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    @Path("getHp/{Level}")
+    public String GetHp(@PathParam("Level") Integer Level) {
 
-    public class Food {
+        JSONArray response = new JSONArray();
+        System.out.println("Invoked Champions.getHp() with Level " + Level);
 
-        @GET
-        @Path("get/{foodID}")
-        public String getFood(@PathParam("foodID") Integer foodID) {
-            System.out.println("Invoked Food.getFood() with foodID " + foodID);
-            try {
-                PreparedStatement ps = Main.db.prepareStatement("SELECT Name, Quantity FROM Food WHERE FoodID = ?");
-                ps.setInt(1, foodID);
-                ResultSet results = ps.executeQuery();
-                JSONObject response = new JSONObject();
-                if (result.next()== true) {
-                    response.put("FoodID", FoodID);
-                    response.put("Name", results.getString(1));
-                    response.put("Quantity", results.getInt(2));
-                }
-                return response.toString();
-            } catch (Exception exception) {
-                System.out.println("Database error: " + exception.getMessage());
-                return "{\"Error\": \"Unable to get item, please see server console for more info.\"}";
+        try {
+            PreparedStatement ps = Main.db.prepareStatement("SELECT Hp,CombinedID FROM Stats WHERE CombinedID=(SELECT CombinedID FROM Levels WHERE Level = ?) ORDER BY Hp DESC ");
+            ResultSet results = ps.executeQuery();
+            while (results.next()==true) {
+                JSONObject row = new JSONObject();
+                row.put("Hp", results.getInt(1));
+                row.put("CombinedID", results.getInt(2));
+                response.add(row);
             }
+            return response.toString();
+        } catch (Exception exception) {
+            System.out.println("Database error: " + exception.getMessage());
+            return "{\"Error\": \"Unable to list items.  Error code xx.\"}";
         }
-
-
     }
+}
+
