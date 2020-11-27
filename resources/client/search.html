@@ -4,50 +4,51 @@
     <meta charset="UTF-8">
     <title>Search</title>
     <script>
-        function display(){
-            imgGET('img1');
-            imgGET('img2');
-            imgGET('img3');
-            nameGET('name1');
-            nameGET('name2');
-            nameGET('name3');
-        }
-        function imgGET(position){
-            console.log("Invoked post/imgGet ID: "+position);
-            var CanvasID = document.getElementById(position).className;
-            var CombinedID = document.getElementById(CanvasID).className;
-            if(CombinedID == "spot"){
-                return;
-            }
-            var url = "/Champions/getimg/"+CombinedID;
-            fetch(url,{method:"GET",}).then(response => {return response.json();}).then(response => {if (response.hasOwnProperty("Error")) {alert(JSON.stringify(response));}else {return response;}});
+
+        function listChampions(stat) {
+            console.log("Invoked listChampions()" + stat );
+
+            let level = document.getElementById("ddlLevel").value;
+
+            var url = ("/champion/get");
+
+            var formData = new FormData();
+            formData.append('stat', stat);
+            formData.append('level', level);
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {
+                return response.json();                 //return promise to JSON
+            }).then(response => {
+                if (response.hasOwnProperty("Error")) {   //checks if response from web server has a key "Error"
+                    alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
+                } else {
+                    console.log(response);
+                    formatList(response);         // otherwise format the data as an HTML table
+
+                }
+            });
+
         }
 
-        function nameGET(position){
-            console.log("Invoked post/nameGet ID: "+position);
-            var CanvasID = document.getElementById(position).className;
-            var CombinedID = document.getElementById(CanvasID).className;
-            if(CombinedID == "spot"){
-                return;
-            }
-            var url = "/Champions/getname/"+CombinedID;
-            fetch(url,{method:"GET"}).then(response => {return response.json();}).then(response => {if (response.hasOwnProperty("Error")){alert(JSON.stringify(response));}else {return response;}});
-        }
+        function formatList(response){
+            let dataHTML = "";
 
-        function listChampions(stat){
-            var level = document.getElementById("Select").value;
-            alert("listing, Stat:"+stat+" Level:"+level);
-            var url = ("/Champions/get"+stat+"/"+level);
-            console.log("Invoked /Champions/get"+stat+"/"+level);
-            fetch(url,{method:"GET"}).then(response => {return response.json();}).then(response => {if(response.hasOwnProperty("Error")){alert(JSON.stringify(response));}else{document.getElementById("Spot1").className.set("CombinedID" ,response[0][1]);document.getElementById("Spot2").className.set("CombinedID" ,response[1][1]);document.getElementById("Spot3").className.set("CombinedID" ,response[2][1]);}});
+            for (let item of response) {                             //creates a table with rows for every item in JSON array
+                dataHTML += "<tr><td>" + item.name + "</td><td>" + item.stat + "</td><td><img src='" + item.imagePath + "'</td> </tr>";
+            }
+            document.getElementById("tblResults").innerHTML += dataHTML;
+
         }
 
 
     </script>
 
     <style>
-        #myCanvas{
-            border:1px solid #000000;
+        #myCanvas {
+            border: 1px solid #000000;
             background-color: aqua;
             padding-left: 0;
             padding-right: 0;
@@ -56,42 +57,21 @@
             display: block;
         }
 
-        #Buttons
-        {
-            border:1px solid #000000;
+        #Buttons {
+            border: 1px solid #000000;
             background-color: aqua;
-            padding-left:  0;
+            padding-left: 0;
             padding-right: 0;
             margin-left: 0;
             margin-right: auto;
             height: 100%;
             width: 100%;
         }
-        #SearchBar
-        {
-            border:1px solid #000000;
-            background-color:aqua;
-            padding-left:  auto;
-            padding-right: 0;
-            margin-left: 0;
-            margin-right: 0;
-            height: 100%;
-            width: 100%;
-        }
-        #DropdownBox{
-            border:1px solid #000000;
-            background-color:aqua;
-            padding-left:  auto;
-            padding-right: 0;
-            margin-left: 0;
-            margin-right: 0;
-            height: 100%;
-            width: 100%;
-        }
-        .spot{
-            border:1px solid #000000;
-            background-color:aqua;
-            padding-left:  auto;
+
+        #SearchBar {
+            border: 1px solid #000000;
+            background-color: aqua;
+            padding-left: auto;
             padding-right: 0;
             margin-left: 0;
             margin-right: 0;
@@ -99,46 +79,66 @@
             width: 100%;
         }
 
-        #ButtonsContainer
-        {
-            height:300px;
+        #DropdownBox {
+            border: 1px solid #000000;
+            background-color: aqua;
+            padding-left: auto;
+            padding-right: 0;
+            margin-left: 0;
+            margin-right: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        .spot {
+            border: 1px solid #000000;
+            background-color: aqua;
+            padding-left: auto;
+            padding-right: 0;
+            margin-left: 0;
+            margin-right: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        #ButtonsContainer {
+            height: 300px;
             position: relative;
-            float:left;
+            float: left;
             width: 150px;
         }
-        #SearchBarContainer
-        {
-            height:50px;
+
+        #SearchBarContainer {
+            height: 50px;
             position: relative;
             float: right;
-            width:260px;
-        }
-        #DropDownContainer
-        {
-            height:50px;
-            position: relative;
-            float: right;
-            width:260px;
-        }
-        .spotcontainer
-        {
-            top:20px;
-            padding-bottom: 10px;
-            height:100px;
-            position: relative;
-            float: right;
-            width:500px;
+            width: 260px;
         }
 
-        #controls
-        {
+        #DropDownContainer {
+            height: 50px;
+            position: relative;
+            float: right;
+            width: 260px;
+        }
+
+        .spotcontainer {
+            top: 20px;
+            padding-bottom: 10px;
+            height: 100px;
+            position: relative;
+            float: right;
+            width: 500px;
+        }
+
+        #controls {
             bottom: 0;
             left: 0;
             position: absolute;
             width: 100%;
         }
-        #Search
-        {
+
+        #Search {
             bottom: 10px;
             left: 10px;
             top: 10px;
@@ -148,8 +148,8 @@
             color: yellow;
             background-color: blue;
         }
-        #Select
-        {
+
+        #Select {
             bottom: 10px;
             left: 10px;
             top: 10px;
@@ -161,8 +161,7 @@
         }
 
 
-        #LabelForBoxes
-        {
+        #LabelForBoxes {
             font-size: 40px;
             font-weight: bold;
             color: yellow;
@@ -170,14 +169,13 @@
             text-align: center;
         }
 
-        input.inputOne
-        {
-            width:60px;
+        input.inputOne {
+            width: 60px;
             background-color: blue;
-            color:yellow;
+            color: yellow;
         }
 
-        body{
+        body {
             background-color: blue;
         }
 
@@ -191,24 +189,24 @@
         var c = document.getElementById("myCanvas");
         var ctx = c.getContext("2d");
         ctx.font = "90px Georgia";
-        ctx.fillStyle= "#FFFF00";
-        ctx.textAlign="center";
+        ctx.fillStyle = "#FFFF00";
+        ctx.textAlign = "center";
 
-        ctx.fillText("League of Stats",c.width/2,c.height-20);
+        ctx.fillText("League of Stats", c.width / 2, c.height - 20);
     </script>
 </canvas>
 
 <div id="ButtonsContainer">
     <canvas onload="" id="Buttons" width="300" height="800">
     </canvas>
-    <menu id="controls" >
+    <menu id="controls">
         <label for="Buttons" id="LabelForBoxes">Stats</label>
         <br>
         <input type="Button" class="inputOne" id="Hp" value="Hp" onclick="listChampions('Hp')">
         <br>
         <input type="Button" class="inputOne" id="MpSp" value="MpSp" onclick="listChampions('Mp')">
         <br>
-        <input type="Button" class="inputOne" id="Hpr" value="Hpr" onclick="listChampions('Hpr')" >
+        <input type="Button" class="inputOne" id="Hpr" value="Hpr" onclick="listChampions('Hpr')">
         <br>
         <input type="Button" class="inputOne" id="MpSpr" value="MpSpr" onclick="listChampions('Mpr')">
         <br>
@@ -229,15 +227,15 @@
 </div>
 
 <div id="SearchBarContainer">
-    <canvas onload="" id="SearchBar" width="200" height="50" >
+    <canvas onload="" id="SearchBar" width="200" height="50">
     </canvas>
     <input id="Search" type="search" value="Enter champion name">
 </div>
 
 <div id="DropDownContainer">
-    <canvas onload="" id="DropdownBox" width="200" height="50" >
+    <canvas onload="" id="DropdownBox" width="200" height="50">
     </canvas>
-    <select id="Select">
+    <select id="ddlLevel">
         <optgroup label="Levels"></optgroup>
         <option value="1">Level 1</option>
         <option value="2">Level 2</option>
@@ -260,20 +258,23 @@
     </select>
 </div>
 
+
+<table id="tblResults"></table>
+
 <div class="spotcontainer">
-<canvas class="spot1" id="spot1" height="100" width="500"></canvas>
+    <canvas class="spot1" id="spot1" height="100" width="500"></canvas>
     <img onload="src=imgGET('img1')" id="img1" class="spot1">
-    <p onload="nameGET('name1')" id="name1"  class="spot1"></p>
+    <p onload="nameGET('name1')" id="name1" class="spot1"></p>
 </div>
 <div class="spotcontainer">
     <canvas class="spot2" id="spot2" height="100" width="500"></canvas>
     <img onload="src=imgGET('img2')" id="img2" class="spot2">
     <p onload="nameGET('name2')" id="name2" class="spot2"></p>
 </div>
-<div class="spotcontainer" >
-    <canvas class="spot3" id="spot3" height="100" width="500" ></canvas>
+<div class="spotcontainer">
+    <canvas class="spot3" id="spot3" height="100" width="500"></canvas>
     <img onload="src=imgGET('img3')" id="img3" class="spot3">
-    <p onload="nameGET('name3')" id="name3"  class="spot3"></p>
+    <p onload="nameGET('name3')" id="name3" class="spot3"></p>
 </div>
 
 

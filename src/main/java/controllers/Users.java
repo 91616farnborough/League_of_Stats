@@ -98,7 +98,7 @@ public class Users {
 
             System.out.println("user/logout");
 
-            PreparedStatement ps1 = Main.db.prepareStatement("SELECT UserID FROM Users WHERE Token = ?");
+            PreparedStatement ps1 = Main.db.prepareStatement("SELECT UserID,  FROM Users WHERE Token = ?");
             ps1.setString(1, token);
             ResultSet logoutResults = ps1.executeQuery();
             if (logoutResults.next()) {
