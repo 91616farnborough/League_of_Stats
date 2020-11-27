@@ -14,11 +14,71 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
-@Path("champions/")
+@Path("Champions/")
 @Consumes(MediaType.MULTIPART_FORM_DATA)
 @Produces(MediaType.APPLICATION_JSON)
 
 public class Champions {
+
+    @GET
+    @Path("getimg/{CombinedID}")
+    public String getimg(@PathParam("CombinedID") Integer CombinedID) {
+        System.out.println("Invoked Food.getFood() with ChampID " + CombinedID);
+        try {
+            PreparedStatement ps = Main.db.prepareStatement("SELECT img FROM Champions WHERE ChampID =(SELECT ChampID FROM Levels WHERE CombinedID = ?)");
+            ps.setInt(1, CombinedID);
+            ResultSet results = ps.executeQuery();
+            JSONObject response = new JSONObject();
+            if (results.next()== true) {
+                response.put("img", results.getString(1));
+            }
+            return response.toString();
+        } catch (Exception exception) {
+            System.out.println("Database error: " + exception.getMessage());
+            return "{\"Error\": \"Unable to get item, please see server console for more info.\"}";
+        }
+    }
+
+    @GET
+    @Path("getname/{CombinedID}")
+    public String getname(@PathParam("CombinedID") Integer CombinedID) {
+        System.out.println("Invoked Food.getFood() with CombinedID " + CombinedID);
+        try {
+            PreparedStatement ps = Main.db.prepareStatement("SELECT Name FROM Champions WHERE ChampID =(SELECT ChampID FROM Levels WHERE CombinedID = ?)");
+            ps.setInt(1, CombinedID);
+            ResultSet results = ps.executeQuery();
+            JSONObject response = new JSONObject();
+            if (results.next()== true) {
+                response.put("Name", results.getString(1));
+            }
+            return response.toString();
+        } catch (Exception exception) {
+            System.out.println("Database error: " + exception.getMessage());
+            return "{\"Error\": \"Unable to get item, please see server console for more info.\"}";
+        }
+    }
+
+    @GET
+    @Path("getimgABC")
+    public String GetABC() {
+
+        JSONArray response = new JSONArray();
+        System.out.println("Invoked Champions.getHp() with level " );
+
+        try {
+            PreparedStatement ps = Main.db.prepareStatement("SELECT img FROM Champions WHERE Name DESC");
+            ResultSet results = ps.executeQuery();
+            while (results.next() == true) {
+                JSONObject row = new JSONObject();
+                row.put("img", results.getString(1));
+                response.add(row);
+            }
+            return response.toString();
+        } catch (Exception exception) {
+            System.out.println("Database error: " + exception.getMessage());
+            return "{\"Error\": \"Unable to list items.  Error code xx.\"}";
+        }
+    }
 
     @GET
     @Path("getHp/{level}")

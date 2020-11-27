@@ -4,11 +4,42 @@
     <meta charset="UTF-8">
     <title>Search</title>
     <script>
-        function imgGET(position){
-            document.getElementById(position) =
+        function display(){
+            imgGET('img1');
+            imgGET('img2');
+            imgGET('img3');
+            nameGET('name1');
+            nameGET('name2');
+            nameGET('name3');
         }
-        function nameGET(position){
+        function imgGET(position){
+            console.log("Invoked post/imgGet ID: "+position);
+            var CanvasID = document.getElementById(position).className;
+            var CombinedID = document.getElementById(CanvasID).className;
+            if(CombinedID == "spot"){
+                return;
+            }
+            var url = "/Champions/getimg/"+CombinedID;
+            fetch(url,{method:"GET",}).then(response => {return response.json();}).then(response => {if (response.hasOwnProperty("Error")) {alert(JSON.stringify(response));}else {return response;}});
+        }
 
+        function nameGET(position){
+            console.log("Invoked post/nameGet ID: "+position);
+            var CanvasID = document.getElementById(position).className;
+            var CombinedID = document.getElementById(CanvasID).className;
+            if(CombinedID == "spot"){
+                return;
+            }
+            var url = "/Champions/getname/"+CombinedID;
+            fetch(url,{method:"GET"}).then(response => {return response.json();}).then(response => {if (response.hasOwnProperty("Error")){alert(JSON.stringify(response));}else {return response;}});
+        }
+
+        function listChampions(stat){
+            var level = document.getElementById("Select").value;
+            alert("listing, Stat:"+stat+" Level:"+level);
+            var url = ("/Champions/get"+stat+"/"+level);
+            console.log("Invoked /Champions/get"+stat+"/"+level);
+            fetch(url,{method:"GET"}).then(response => {return response.json();}).then(response => {if(response.hasOwnProperty("Error")){alert(JSON.stringify(response));}else{document.getElementById("Spot1").className.set("CombinedID" ,response[0][1]);document.getElementById("Spot2").className.set("CombinedID" ,response[1][1]);document.getElementById("Spot3").className.set("CombinedID" ,response[2][1]);}});
         }
 
 
@@ -153,7 +184,7 @@
 
     </style>
 </head>
-<body>
+<body onmouseover="display()">
 
 <canvas onload="" id="myCanvas" width="800" height="100">
     <script>
@@ -170,30 +201,30 @@
 <div id="ButtonsContainer">
     <canvas onload="" id="Buttons" width="300" height="800">
     </canvas>
-    <menu id="controls">
+    <menu id="controls" >
         <label for="Buttons" id="LabelForBoxes">Stats</label>
         <br>
-        <input type="Button" class="inputOne" id="Hp" value="Hp" >
+        <input type="Button" class="inputOne" id="Hp" value="Hp" onclick="listChampions('Hp')">
         <br>
-        <input type="Button" class="inputOne" id="MpSp" value="MpSp" >
+        <input type="Button" class="inputOne" id="MpSp" value="MpSp" onclick="listChampions('Mp')">
         <br>
-        <input type="Button" class="inputOne" id="Hpr" value="Hpr" >
+        <input type="Button" class="inputOne" id="Hpr" value="Hpr" onclick="listChampions('Hpr')" >
         <br>
-        <input type="Button" class="inputOne" id="MpSpr" value="MpSpr" >
+        <input type="Button" class="inputOne" id="MpSpr" value="MpSpr" onclick="listChampions('Mpr')">
         <br>
-        <input type="Button" class="inputOne" id="AD" value="AD" >
+        <input type="Button" class="inputOne" id="AD" value="AD" onclick="listChampions('AD')">
         <br>
-        <input type="Button" class="inputOne" id="AP" value="AP" >
+        <input type="Button" class="inputOne" id="AP" value="AP" onclick="listChampions('AP')">
         <br>
-        <input type="Button" class="inputOne" id="PR" value="PR" >
+        <input type="Button" class="inputOne" id="PR" value="PR" onclick="listChampions('PR')">
         <br>
-        <input type="Button" class="inputOne" id="MR" value="MR" >
+        <input type="Button" class="inputOne" id="MR" value="MR" onclick="listChampions('MR')">
         <br>
-        <input type="Button" class="inputOne" id="AS" value="AS" >
+        <input type="Button" class="inputOne" id="AS" value="AS" onclick="listChampions('AS')">
         <br>
-        <input type="Button" class="inputOne" id="MS" value="MS" >
+        <input type="Button" class="inputOne" id="MS" value="MS" onclick="listChampions('MS')">
         <br>
-        <input type="Button" class="inputOne" id="Range" value="Range" >
+        <input type="Button" class="inputOne" id="Range" value="Range" onclick="listChampions('Range')">
     </menu>
 </div>
 
@@ -230,22 +261,20 @@
 </div>
 
 <div class="spotcontainer">
-<canvas class="spot" id="spot1" height="100" width="500"></canvas>
-    <img onload="src=imgGET('img1')" id="img1">
-    <p onsort="nameGET('name1')" id="name1"></p>
+<canvas class="spot1" id="spot1" height="100" width="500"></canvas>
+    <img onload="src=imgGET('img1')" id="img1" class="spot1">
+    <p onload="nameGET('name1')" id="name1"  class="spot1"></p>
 </div>
 <div class="spotcontainer">
-    <canvas class="spot" id="spot2" height="100" width="500"></canvas>
-    <img onload="src=imgGET('img2')" id="img2">
-    <p onsort="nameGET('name2')" id="name2"></p>
+    <canvas class="spot2" id="spot2" height="100" width="500"></canvas>
+    <img onload="src=imgGET('img2')" id="img2" class="spot2">
+    <p onload="nameGET('name2')" id="name2" class="spot2"></p>
 </div>
-<div class="spotcontainer">
-    <canvas class="spot" id="spot3" height="100" width="500"></canvas>
-    <img onload="src=imgGET('img3')" id="img3" >
-    <p onsort="nameGET('name3')" id="name3"></p>
+<div class="spotcontainer" >
+    <canvas class="spot3" id="spot3" height="100" width="500" ></canvas>
+    <img onload="src=imgGET('img3')" id="img3" class="spot3">
+    <p onload="nameGET('name3')" id="name3"  class="spot3"></p>
 </div>
-
-
 
 
 </body>
