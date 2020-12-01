@@ -20,7 +20,7 @@ public class Champion {
     @POST
     @Path("get")
     public String championGet (@FormDataParam("level") Integer level, @FormDataParam("stat") String stat) {
-        System.out.println("Invoked champion.getFood()");
+        System.out.println("Invoked champion.getStat()");
         System.out.println("stat " + stat);
 
         JSONArray response = new JSONArray();
@@ -30,7 +30,7 @@ public class Champion {
             ResultSet results = stmt.executeQuery(query);
             while (results.next()==true) {
                 JSONObject row = new JSONObject();
-                row.put("stat", results.getInt(1));
+                row.put("stat", results.getString(1));
                 row.put("name", results.getString(2));
                 row.put("imagePath", results.getString(3));
                 response.add(row);

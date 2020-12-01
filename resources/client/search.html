@@ -35,11 +35,12 @@
 
         function formatList(response){
             let dataHTML = "";
+            var count = 0;
 
             for (let item of response) {                             //creates a table with rows for every item in JSON array
-                dataHTML += "<tr><td>" + item.name + "</td><td>" + item.stat + "</td><td><img src='" + item.imagePath + "'</td> </tr>";
+                dataHTML += "<tr class='spotcontainer'><td class='spot' ><img width='100' height='90' src='" + item.imagePath + "'</td><td class='spot'>" + item.name + "</td><td class='spot'>" + item.stat + "</td> </tr> <br>";
             }
-            document.getElementById("tblResults").innerHTML += dataHTML;
+            document.getElementById("tblResults").innerHTML = dataHTML;
 
         }
 
@@ -92,13 +93,15 @@
 
         .spot {
             border: 1px solid #000000;
-            background-color: aqua;
+            background-color: blue;
             padding-left: auto;
             padding-right: 0;
             margin-left: 0;
             margin-right: 0;
             height: 100%;
-            width: 100%;
+            width: 50%;
+            font-size: large;
+            color: yellow;
         }
 
         #ButtonsContainer {
@@ -123,12 +126,16 @@
         }
 
         .spotcontainer {
-            top: 20px;
-            padding-bottom: 10px;
+            border: 1px solid #000000;
+            padding: 10px;
+            margin-top: 10px;
+
+            background-color: aqua;
             height: 100px;
             position: relative;
             float: right;
             width: 500px;
+
         }
 
         #controls {
@@ -149,7 +156,7 @@
             background-color: blue;
         }
 
-        #Select {
+        #ddlLevel {
             bottom: 10px;
             left: 10px;
             top: 10px;
@@ -218,7 +225,7 @@
         <br>
         <input type="Button" class="inputOne" id="MR" value="MR" onclick="listChampions('MR')">
         <br>
-        <input type="Button" class="inputOne" id="AS" value="AS" onclick="listChampions('AS')">
+        <input type="Button" class="inputOne" id="AS" value="As" onclick="listChampions('AttackSpeed')">
         <br>
         <input type="Button" class="inputOne" id="MS" value="MS" onclick="listChampions('MS')">
         <br>
@@ -261,21 +268,6 @@
 
 <table id="tblResults"></table>
 
-<div class="spotcontainer">
-    <canvas class="spot1" id="spot1" height="100" width="500"></canvas>
-    <img onload="src=imgGET('img1')" id="img1" class="spot1">
-    <p onload="nameGET('name1')" id="name1" class="spot1"></p>
-</div>
-<div class="spotcontainer">
-    <canvas class="spot2" id="spot2" height="100" width="500"></canvas>
-    <img onload="src=imgGET('img2')" id="img2" class="spot2">
-    <p onload="nameGET('name2')" id="name2" class="spot2"></p>
-</div>
-<div class="spotcontainer">
-    <canvas class="spot3" id="spot3" height="100" width="500"></canvas>
-    <img onload="src=imgGET('img3')" id="img3" class="spot3">
-    <p onload="nameGET('name3')" id="name3" class="spot3"></p>
-</div>
 
 
 </body>
