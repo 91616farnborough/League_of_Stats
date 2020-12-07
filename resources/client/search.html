@@ -33,17 +33,152 @@
 
         }
 
+        function searchlist(){
+            console.log("Invoked defaultlist()");
+
+            let level = document.getElementById("ddlLevel").value;
+            let search = document.getElementById("Search").value;
+
+            search = "'%"+search+"%'";
+            console.log(search);
+
+            var url = ("/champion/search");
+
+            var formData = new FormData();
+            formData.append('level', level);
+            formData.append('search', search);
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {
+                return response.json();                 //return promise to JSON
+        }).then(response => {
+                if (response.hasOwnProperty("Error")) {   //checks if response from web server has a key "Error"
+                alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
+            } else {
+                console.log(response);
+                formatabcList(response);         // otherwise format the data as an HTML table
+
+            }
+        });
+        }
+
+        function defaultlist(){
+            console.log("Invoked defaultlist()");
+
+            let level = document.getElementById("ddlLevel").value;
+
+            var url = ("/champion/abc");
+
+            var formData = new FormData();
+            formData.append('level', level);
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {
+                return response.json();                 //return promise to JSON
+        }).then(response => {
+                if (response.hasOwnProperty("Error")) {   //checks if response from web server has a key "Error"
+                alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
+            } else {
+                console.log(response);
+                formatabcList(response);         // otherwise format the data as an HTML table
+
+            }
+        });
+        }
+
+        function formatabcList(response){
+            let dataHTML = "";
+            var count = 0;
+
+            for (let item of response) {                             //creates a table with rows for every item in JSON array
+                dataHTML += "<tr class='spotcontainer'  ><td class='spot' ><img width='100' height='90' src='" + item.imagePath + "'</td><td class='spot' id='name' onclick='openchampion(this.id)' >" + item.name + "</td></tr> <br>";
+                //document.getElementById("name").id = ("name"+count.toString());
+            }
+            document.getElementById("tblResults").innerHTML = dataHTML;
+        }
+
         function formatList(response){
             let dataHTML = "";
             var count = 0;
 
             for (let item of response) {                             //creates a table with rows for every item in JSON array
-                dataHTML += "<tr class='spotcontainer'><td class='spot' ><img width='100' height='90' src='" + item.imagePath + "'</td><td class='spot'>" + item.name + "</td><td class='spot'>" + item.stat + "</td> </tr> <br>";
+                dataHTML += "<tr class='spotcontainer'><td class='spot' ><img width='100' height='90' src='" + item.imagePath + "'</td><td class='spot' id='name' onclick='openchampion(this.id)'>" + item.name + "</td><td class='spot'>" + item.stat + "</td></tr> <br>";
+                document.getElementById("name").id = ("name"+count.toString()+"");
+
             }
             document.getElementById("tblResults").innerHTML = dataHTML;
-
         }
 
+        function openchampion(id){
+            console.log("Invoked openchampion() with id:"+id);
+
+            let name = document.getElementById(id).value;
+            let level = document.getElementById("ddlLevel").value;
+
+            var url = ("/champion/IDget");
+
+            var formData = new FormData();
+            formData.append('name', name);
+            formData.append('level', level);
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {
+                return response.json();                 //return promise to JSON
+        }).then(response => {
+                if (response.hasOwnProperty("Error")) {   //checks if response from web server has a key "Error"
+                alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
+            } else {
+                console.log(response);
+                var StatsID = response;                 // otherwise format the data as an HTML table
+            }
+        });
+
+            url="/User/ID";
+            var cookie = document.cookie;
+            var newformData = new FormData();
+            newformData.append('cookie',cookie);
+
+
+            fetch(url, {
+                method: "POST",
+                body: newformData,
+            }).then(response => {
+                return response.json();                 //return promise to JSON
+        }).then(response => {
+                if (response.hasOwnProperty("Error")) {   //checks if response from web server has a key "Error"
+                alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
+            } else {
+                console.log(response);
+                var UserID = response;         // otherwise format the data as an HTML table
+            }
+        });
+
+            var NewformData = new FormData();
+            formData.append('StatsID',StatsID);
+            formData.append('UserID',UserID);
+            formData.append('favourite',false);
+
+            url = "/Pages/add";
+
+            fetch(url, {
+                method: "POST",
+                body: NewformData,
+            }).then(response => {
+                return response.json()
+            }).then(response => {
+                if (response.hasOwnProperty("Error")) {   //checks if response from server has a key "Error"
+                alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
+            } else {
+                window.open("champion.html", "_self");   //if not open this page (for example!)
+            }
+        });
+        }
 
     </script>
 
@@ -189,7 +324,7 @@
 
     </style>
 </head>
-<body onmouseover="display()">
+<body onload="defaultlist()"">
 
 <canvas onload="" id="myCanvas" width="800" height="100">
     <script>
@@ -236,7 +371,7 @@
 <div id="SearchBarContainer">
     <canvas onload="" id="SearchBar" width="200" height="50">
     </canvas>
-    <input id="Search" type="search" value="Enter champion name">
+    <input id="Search" type="search" value="Enter champion name" oninput="searchlist()">
 </div>
 
 <div id="DropDownContainer">
