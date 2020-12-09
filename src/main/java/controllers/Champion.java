@@ -20,7 +20,7 @@ public class Champion {
     @POST
     @Path("get")
     public String championGet (@FormDataParam("level") Integer level, @FormDataParam("stat") String stat) {
-        System.out.println("Invoked champion.getStat()");
+        System.out.println("Invoked champion.getStat()"+stat);
         System.out.println("stat " + stat);
 
         JSONArray response = new JSONArray();
@@ -89,15 +89,16 @@ public class Champion {
     }
 
     @POST
-    @Path("IDget")
+    @Path("StatsID")
     public String championIDGet (@FormDataParam("level") String level, @FormDataParam("name") String name) {
         System.out.println("Invoked champion.getStat()");
-        String query = "SELECT StatsID FROM Stats INNER JOIN Champions ON Stats.ChampionID = Champions.ChampionID WHERE Stats.Level ="+level+" AND  Champions.Name ="+name;
+        String query = "SELECT StatsID FROM Stats INNER JOIN Champions ON Stats.ChampionID = Champions.ChampionID WHERE Stats.Level ="+level+" AND  Champions.Name = '"+name+"'";
         try  {
             PreparedStatement ps = Main.db.prepareStatement(query);
-
-            String response = (ps.executeQuery()).toString();
-            return response;
+            ResultSet response = (ps.executeQuery());
+            JSONObject userDetails = new JSONObject();
+            userDetails.put("StatsID", response.getInt(1));
+            return userDetails.toString();
         } catch (Exception exception) {
             System.out.println("Database error: " + exception.getMessage());
             return "{\"Error\": \"Unable to get item, please see server console for more info.\"}";

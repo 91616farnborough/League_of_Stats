@@ -142,12 +142,14 @@ public class Users {
 
     @POST
     @Path("ID")
-    public String UserID(@CookieParam("cookie") String cookie) {
-        System.out.println("Invoked UserID() on path User/ID");
+    public String UserID(@FormDataParam("username") String username) {
+        System.out.println("Invoked UserID() on path User/ID"+username);
         try {
-            PreparedStatement ps = Main.db.prepareStatement("SELECT UserID FROM Users WHERE Token = "+cookie);
-            String response = (ps.executeQuery()).toString();
-            return response;
+            PreparedStatement ps = Main.db.prepareStatement("SELECT UserID FROM Users WHERE UserName = '"+username+"'");
+            ResultSet response = ps.executeQuery();
+            JSONObject userDetails = new JSONObject();
+            userDetails.put("userID", response.getInt(1));
+            return userDetails.toString();
         } catch (Exception exception) {
             System.out.println("Database error: " + exception.getMessage());
             return "{\"Error\": \"Unable to list items.  Error code xx.\"}";

@@ -6,7 +6,7 @@
     <script>
 
         function listChampions(stat) {
-            console.log("Invoked listChampions()" + stat );
+            console.log("Invoked listChampions()"+stat );
 
             let level = document.getElementById("ddlLevel").value;
 
@@ -22,15 +22,13 @@
             }).then(response => {
                 return response.json();                 //return promise to JSON
             }).then(response => {
-                if (response.hasOwnProperty("Error")) {   //checks if response from web server has a key "Error"
+                if (response.hasOwnProperty("Error")){   //checks if response from web server has a key "Error"
                     alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
                 } else {
                     console.log(response);
                     formatList(response);         // otherwise format the data as an HTML table
-
                 }
             });
-
         }
 
         function searchlist(){
@@ -95,8 +93,7 @@
             var count = 0;
 
             for (let item of response) {                             //creates a table with rows for every item in JSON array
-                dataHTML += "<tr class='spotcontainer'  ><td class='spot' ><img width='100' height='90' src='" + item.imagePath + "'</td><td class='spot' id='name' onclick='openchampion(this.id)' >" + item.name + "</td></tr> <br>";
-                //document.getElementById("name").id = ("name"+count.toString());
+                dataHTML += "<tr class='spotcontainer' id='"+item.name+"' onclick='Addrecent(this.id)' ><td class='spot' ><img width='100' height='90' src='" + item.imagePath + "'></td><td class='name' id='spot'  >" + item.name + "</td></tr> <br>";
             }
             document.getElementById("tblResults").innerHTML = dataHTML;
         }
@@ -106,23 +103,49 @@
             var count = 0;
 
             for (let item of response) {                             //creates a table with rows for every item in JSON array
-                dataHTML += "<tr class='spotcontainer'><td class='spot' ><img width='100' height='90' src='" + item.imagePath + "'</td><td class='spot' id='name' onclick='openchampion(this.id)'>" + item.name + "</td><td class='spot'>" + item.stat + "</td></tr> <br>";
-                document.getElementById("name").id = ("name"+count.toString()+"");
-
+                dataHTML += "<tr class='spotcontainer' id='"+item.name+"' onclick='Addrecent(this.id)' ><td class='spot' ><img width='100' height='90' src='" + item.imagePath + "'</td><td  class='spot' >" + item.name + "</td><td class='spot'>" + item.stat + "</td></tr> <br>";
             }
             document.getElementById("tblResults").innerHTML = dataHTML;
         }
 
-        function openchampion(id){
-            console.log("Invoked openchampion() with id:"+id);
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for(var i = 0; i <ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
 
-            let name = document.getElementById(id).value;
-            let level = document.getElementById("ddlLevel").value;
+        function Addrecent(id){
+            console.log("Invoked listChampions()"+id );
 
-            var url = ("/champion/IDget");
+            var statsID = StatsID(id);
+            console.log("type of data: "+typeof(statsID));
+            console.log("data: "+JSON.stringify(statsID));
+            var userID = UserID();
+            console.log("type of data: "+typeof(userID));
+            console.log("data: "+JSON.stringify(userID));
+            AddrecentPt2(userID,statsID);
+        }
+
+
+        function StatsID(id){
+            console.log("Invoked Stats()"+id );
+
+            var level = document.getElementById("ddlLevel").value;
+
+            var url = ("/champion/StatsID");
 
             var formData = new FormData();
-            formData.append('name', name);
+            formData.append('name', id);
             formData.append('level', level);
 
             fetch(url, {
@@ -131,44 +154,53 @@
             }).then(response => {
                 return response.json();                 //return promise to JSON
         }).then(response => {
-                if (response.hasOwnProperty("Error")) {   //checks if response from web server has a key "Error"
+                if (response.hasOwnProperty("Error")){   //checks if response from web server has a key "Error"
                 alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
             } else {
-                console.log(response);
-                var StatsID = response;                 // otherwise format the data as an HTML table
+                statsID.set("StatsID",response.StatsID);
+                return statsID[0]
+
+                // otherwise format the data as an HTML table
             }
         });
+        }
 
-            url="/User/ID";
-            var cookie = document.cookie;
-            var newformData = new FormData();
-            newformData.append('cookie',cookie);
 
+        function UserID(){
+
+            var url = ("/User/ID");
+            var username = getCookie('username');
+            console.log("invoked UserID "+username);
+            var formData = new FormData();
+            formData.append('username', username);
 
             fetch(url, {
                 method: "POST",
-                body: newformData,
+                body: formData,
             }).then(response => {
                 return response.json();                 //return promise to JSON
         }).then(response => {
-                if (response.hasOwnProperty("Error")) {   //checks if response from web server has a key "Error"
+                if (response.hasOwnProperty("Error")){   //checks if response from web server has a key "Error"
                 alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
             } else {
-                console.log(response);
-                var UserID = response;         // otherwise format the data as an HTML table
+                return usersID.set("UserID",response.UserID);  // otherwise format the data as an HTML table
             }
         });
+        }
 
-            var NewformData = new FormData();
-            formData.append('StatsID',StatsID);
-            formData.append('UserID',UserID);
-            formData.append('favourite',false);
+        function AddrecentPt2(userID,statsID) {
+            console.log("invoked AddrecentPt2"+userID+" "+statsID);
 
-            url = "/Pages/add";
+            var url = ("/Pages/add");
+
+            var formData = new FormData();
+            formData.append('UserID', userID);
+            formData.append('StatsID', statsID);
+            formData.append('favourite', false);
 
             fetch(url, {
                 method: "POST",
-                body: NewformData,
+                body: formData,
             }).then(response => {
                 return response.json()
             }).then(response => {
@@ -178,7 +210,10 @@
                 window.open("champion.html", "_self");   //if not open this page (for example!)
             }
         });
+
         }
+
+
 
     </script>
 
@@ -227,6 +262,19 @@
         }
 
         .spot {
+            border: 1px solid #000000;
+            background-color: blue;
+            padding-left: auto;
+            padding-right: 0;
+            margin-left: 0;
+            margin-right: 0;
+            height: 100%;
+            width: 50%;
+            font-size: large;
+            color: yellow;
+        }
+
+        #spot {
             border: 1px solid #000000;
             background-color: blue;
             padding-left: auto;
@@ -324,7 +372,7 @@
 
     </style>
 </head>
-<body onload="defaultlist()"">
+<body onload="defaultlist()">
 
 <canvas onload="" id="myCanvas" width="800" height="100">
     <script>
