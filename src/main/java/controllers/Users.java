@@ -14,6 +14,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import server.Main;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 @Path("User/")
 @Consumes(MediaType.MULTIPART_FORM_DATA)
 @Produces(MediaType.APPLICATION_JSON)
@@ -144,15 +155,16 @@ public class Users {
     @Path("ID")
     public String UserID(@FormDataParam("username") String username) {
         System.out.println("Invoked UserID() on path User/ID"+username);
-        try {
-            PreparedStatement ps = Main.db.prepareStatement("SELECT UserID FROM Users WHERE UserName = '"+username+"'");
-            ResultSet response = ps.executeQuery();
-            JSONObject userDetails = new JSONObject();
-            userDetails.put("userID", response.getInt(1));
-            return userDetails.toString();
+        String query = "SELECT UserID FROM Users WHERE UserName='"+username+"'";
+        try (Statement stmt = Main.db.createStatement()) {
+            ResultSet results = stmt.executeQuery(query);
+            JSONObject row = new JSONObject();
+            row.put("UserID", results.getString(1));
+            System.out.println(row.toString());
+            return row.toString();
         } catch (Exception exception) {
             System.out.println("Database error: " + exception.getMessage());
-            return "{\"Error\": \"Unable to list items.  Error code xx.\"}";
+            return "{\"Error\": \"Unable to list items. User Not authorised.\"}";
         }
     }
 

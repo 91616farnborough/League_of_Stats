@@ -21,7 +21,6 @@ public class Favourite {
     public String PageAdd(@FormDataParam("UserID") Integer userID , @FormDataParam("StatsID") Integer statsID, @FormDataParam("favourite") Boolean favourite) {
         System.out.println("Invoked Page.PageAdd()");
         String query = "INSERT INTO Favourites (UserID,StatsID,Favourite) VALUES("+userID+","+statsID+","+favourite+")";
-
         try {
             PreparedStatement ps = Main.db.prepareStatement(query);
             ps.execute();

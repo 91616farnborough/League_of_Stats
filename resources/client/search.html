@@ -20,13 +20,13 @@
                 method: "POST",
                 body: formData,
             }).then(response => {
-                return response.json();                 //return promise to JSON
+                return response.json();
             }).then(response => {
-                if (response.hasOwnProperty("Error")){   //checks if response from web server has a key "Error"
-                    alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
+                if (response.hasOwnProperty("Error")){
+                    alert(JSON.stringify(response));
                 } else {
                     console.log(response);
-                    formatList(response);         // otherwise format the data as an HTML table
+                    formatList(response);
                 }
             });
         }
@@ -50,13 +50,13 @@
                 method: "POST",
                 body: formData,
             }).then(response => {
-                return response.json();                 //return promise to JSON
+                return response.json();
         }).then(response => {
-                if (response.hasOwnProperty("Error")) {   //checks if response from web server has a key "Error"
-                alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
+                if (response.hasOwnProperty("Error")) {
+                alert(JSON.stringify(response));
             } else {
                 console.log(response);
-                formatabcList(response);         // otherwise format the data as an HTML table
+                formatabcList(response);
 
             }
         });
@@ -76,13 +76,13 @@
                 method: "POST",
                 body: formData,
             }).then(response => {
-                return response.json();                 //return promise to JSON
+                return response.json();
         }).then(response => {
-                if (response.hasOwnProperty("Error")) {   //checks if response from web server has a key "Error"
-                alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
+                if (response.hasOwnProperty("Error")) {
+                alert(JSON.stringify(response));
             } else {
                 console.log(response);
-                formatabcList(response);         // otherwise format the data as an HTML table
+                formatabcList(response);
 
             }
         });
@@ -92,8 +92,8 @@
             let dataHTML = "";
             var count = 0;
 
-            for (let item of response) {                             //creates a table with rows for every item in JSON array
-                dataHTML += "<tr class='spotcontainer' id='"+item.name+"' onclick='Addrecent(this.id)' ><td class='spot' ><img width='100' height='90' src='" + item.imagePath + "'></td><td class='name' id='spot'  >" + item.name + "</td></tr> <br>";
+            for (let item of response) {
+                dataHTML += "<tr class='spotcontainer' id='"+item.name+"' onclick='Addrecent(this.id)' ><td  ><img width='100' height='90' src='" + item.imagePath + "'></td><td class='spot'  >" + item.name + "</td></tr> <br>";
             }
             document.getElementById("tblResults").innerHTML = dataHTML;
         }
@@ -102,8 +102,8 @@
             let dataHTML = "";
             var count = 0;
 
-            for (let item of response) {                             //creates a table with rows for every item in JSON array
-                dataHTML += "<tr class='spotcontainer' id='"+item.name+"' onclick='Addrecent(this.id)' ><td class='spot' ><img width='100' height='90' src='" + item.imagePath + "'</td><td  class='spot' >" + item.name + "</td><td class='spot'>" + item.stat + "</td></tr> <br>";
+            for (let item of response) {
+                dataHTML += "<tr class='spotcontainer' id='"+item.name+"' onclick='Addrecent(this.id)' ><td  ><img width='100' height='90' src='" + item.imagePath + "'</td><td  class='spot' >" + item.name + "</td><td class='spot'>" + item.stat + "</td></tr> <br>";
             }
             document.getElementById("tblResults").innerHTML = dataHTML;
         }
@@ -126,66 +126,7 @@
 
         function Addrecent(id){
             console.log("Invoked listChampions()"+id );
-
-            var statsID = StatsID(id);
-            console.log("type of data: "+typeof(statsID));
-            console.log("data: "+JSON.stringify(statsID));
-            var userID = UserID();
-            console.log("type of data: "+typeof(userID));
-            console.log("data: "+JSON.stringify(userID));
-            AddrecentPt2(userID,statsID);
-        }
-
-
-        function StatsID(id){
-            console.log("Invoked Stats()"+id );
-
-            var level = document.getElementById("ddlLevel").value;
-
-            var url = ("/champion/StatsID");
-
-            var formData = new FormData();
-            formData.append('name', id);
-            formData.append('level', level);
-
-            fetch(url, {
-                method: "POST",
-                body: formData,
-            }).then(response => {
-                return response.json();                 //return promise to JSON
-        }).then(response => {
-                if (response.hasOwnProperty("Error")){   //checks if response from web server has a key "Error"
-                alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
-            } else {
-                statsID.set("StatsID",response.StatsID);
-                return statsID[0]
-
-                // otherwise format the data as an HTML table
-            }
-        });
-        }
-
-
-        function UserID(){
-
-            var url = ("/User/ID");
-            var username = getCookie('username');
-            console.log("invoked UserID "+username);
-            var formData = new FormData();
-            formData.append('username', username);
-
-            fetch(url, {
-                method: "POST",
-                body: formData,
-            }).then(response => {
-                return response.json();                 //return promise to JSON
-        }).then(response => {
-                if (response.hasOwnProperty("Error")){   //checks if response from web server has a key "Error"
-                alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
-            } else {
-                return usersID.set("UserID",response.UserID);  // otherwise format the data as an HTML table
-            }
-        });
+            getStatsID(id);
         }
 
         function AddrecentPt2(userID,statsID) {
@@ -204,14 +145,78 @@
             }).then(response => {
                 return response.json()
             }).then(response => {
-                if (response.hasOwnProperty("Error")) {   //checks if response from server has a key "Error"
-                alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
+                if (response.hasOwnProperty("Error")) {
+                alert(JSON.stringify(response));
             } else {
-                window.open("champion.html", "_self");   //if not open this page (for example!)
+                window.open("champion.html", "_self");
             }
         });
 
         }
+
+
+        function getStatsID(id){
+            console.log("Invoked Stats()"+id );
+
+            var level = document.getElementById("ddlLevel").value;
+
+            var url = ("/champion/StatsID");
+
+            var formData = new FormData();
+            formData.append('name', id);
+            formData.append('level', level);
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {
+                return response.json();
+        }).then(response => {
+                if (response.hasOwnProperty("Error")){
+                alert(JSON.stringify(response));
+            } else {
+                var json = JSON.stringify(response);
+                var obj = JSON.parse(json);
+                var statsID = (JSON.parse(obj.StatsID));
+                console.log("StatsID");
+                console.log("returns :"+statsID);
+                console.log("of type :"+typeof statsID);
+                getUserID(statsID);
+            }
+        });
+        }
+
+
+        function getUserID(statsID){
+
+            var url = ("/User/ID");
+            var username = getCookie('username');
+            console.log("invoked UserID "+username);
+            var formData = new FormData();
+            formData.append('username', username);
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {
+                return response.json();
+        }).then(response => {
+                if (response.hasOwnProperty("Error")){
+                alert(JSON.stringify(response));
+                return -1;
+            } else {
+                var json = JSON.stringify(response);
+                var obj = JSON.parse(json);
+                var userID = (JSON.parse(obj.UserID));
+                console.log("UserID");
+                console.log("returns :"+userID);
+                console.log("of type :"+typeof userID);
+                AddrecentPt2(userID,statsID);
+                }
+        });
+        }
+
+
 
 
 
@@ -249,6 +254,16 @@
             height: 100%;
             width: 100%;
         }
+        #ReverseButton {
+            border: 1px solid #000000;
+            background-color: aqua;
+            padding-left: auto;
+            padding-right: 0;
+            margin-left: 0;
+            margin-right: 0;
+            height: 100%;
+            width: 100%;
+        }
 
         #DropdownBox {
             border: 1px solid #000000;
@@ -270,21 +285,9 @@
             margin-right: 0;
             height: 100%;
             width: 50%;
-            font-size: large;
+            font-size: 30px;
             color: yellow;
-        }
-
-        #spot {
-            border: 1px solid #000000;
-            background-color: blue;
-            padding-left: auto;
-            padding-right: 0;
-            margin-left: 0;
-            margin-right: 0;
-            height: 100%;
-            width: 50%;
-            font-size: large;
-            color: yellow;
+            text-align: center;
         }
 
         #ButtonsContainer {
@@ -301,6 +304,14 @@
             width: 260px;
         }
 
+        #ReverseContainer {
+            height: 50px;
+            position: relative;
+            float: right;
+            width: 150px;
+            padding: 10px;
+        }
+
         #DropDownContainer {
             height: 50px;
             position: relative;
@@ -312,7 +323,6 @@
             border: 1px solid #000000;
             padding: 10px;
             margin-top: 10px;
-
             background-color: aqua;
             height: 100px;
             position: relative;
@@ -335,6 +345,18 @@
             right: 10px;
             position: absolute;
             width: 90%;
+            color: yellow;
+            background-color: blue;
+        }
+
+        #Reverse {
+            bottom: 10px;
+            left: 50px;
+            top: 20px;
+            right: 10px;
+            position: absolute;
+            width: 40%;
+            height: 40%;
             color: yellow;
             background-color: blue;
         }
@@ -418,7 +440,7 @@
 
 <div id="SearchBarContainer">
     <canvas onload="" id="SearchBar" width="200" height="50">
-    </canvas>
+</canvas>
     <input id="Search" type="search" value="Enter champion name" oninput="searchlist()">
 </div>
 
@@ -448,6 +470,11 @@
     </select>
 </div>
 
+<div id="ReverseContainer">
+    <canvas onload="" id="ReverseButton" width="200" height="50">
+    </canvas>
+    <input id="Reverse" type="Button" value="Reverse" oninput="Reverse()">
+</div>
 
 <table id="tblResults"></table>
 
