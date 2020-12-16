@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Search</title>
     <script>
+        var Response;
 
         function listChampions(stat) {
             console.log("Invoked listChampions()"+stat );
@@ -57,7 +58,6 @@
             } else {
                 console.log(response);
                 formatabcList(response);
-
             }
         });
         }
@@ -90,22 +90,36 @@
 
         function formatabcList(response){
             let dataHTML = "";
-            var count = 0;
-
+            Response = response;
             for (let item of response) {
                 dataHTML += "<tr class='spotcontainer' id='"+item.name+"' onclick='Addrecent(this.id)' ><td  ><img width='100' height='90' src='" + item.imagePath + "'></td><td class='spot'  >" + item.name + "</td></tr> <br>";
             }
             document.getElementById("tblResults").innerHTML = dataHTML;
         }
 
+
         function formatList(response){
             let dataHTML = "";
-            var count = 0;
-
+            Response =response;
             for (let item of response) {
-                dataHTML += "<tr class='spotcontainer' id='"+item.name+"' onclick='Addrecent(this.id)' ><td  ><img width='100' height='90' src='" + item.imagePath + "'</td><td  class='spot' >" + item.name + "</td><td class='spot'>" + item.stat + "</td></tr> <br>";
+                dataHTML += "<tr class='spotcontainer' id='" + item.name + "' onclick='Addrecent(this.id)' ><td  ><img width='100' height='90' src='" + item.imagePath + "'</td><td  class='spot' >" + item.name + "</td><td class='spot'>" + item.stat + "</td></tr> <br>";
             }
             document.getElementById("tblResults").innerHTML = dataHTML;
+        }
+
+        function ReverseList() {
+            let dataHTML ="";
+            Response = Response.reverse();
+            for (let item of Response) {
+                if(item.stat === undefined){
+                    dataHTML += "<tr class='spotcontainer' id='"+item.name+"' onclick='Addrecent(this.id)' ><td  ><img width='100' height='90' src='" + item.imagePath + "'></td><td class='spot'  >" + item.name + "</td></tr> <br>" ;
+                }
+                else {
+                    dataHTML += "<tr class='spotcontainer' id='" + item.name + "' onclick='Addrecent(this.id)' ><td  ><img width='100' height='90' src='" + item.imagePath + "'</td><td  class='spot' >" + item.name + "</td><td class='spot'>" + item.stat + "</td></tr> <br>";
+                }
+            }
+            document.getElementById("tblResults").innerHTML = dataHTML;
+
         }
 
         function getCookie(cname) {
@@ -473,7 +487,7 @@
 <div id="ReverseContainer">
     <canvas onload="" id="ReverseButton" width="200" height="50">
     </canvas>
-    <input id="Reverse" type="Button" value="Reverse" oninput="Reverse()">
+    <input id="Reverse" type="Button" value="Reverse" onclick="ReverseList()">
 </div>
 
 <table id="tblResults"></table>
