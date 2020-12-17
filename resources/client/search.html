@@ -33,7 +33,7 @@
         }
 
         function searchlist(){
-            console.log("Invoked defaultlist()");
+            console.log("Invoked searchlist()");
 
             let level = document.getElementById("ddlLevel").value;
             let search = document.getElementById("Search").value;
@@ -217,7 +217,6 @@
         }).then(response => {
                 if (response.hasOwnProperty("Error")){
                 alert(JSON.stringify(response));
-                return -1;
             } else {
                 var json = JSON.stringify(response);
                 var obj = JSON.parse(json);
