@@ -259,6 +259,141 @@
             }
             document.getElementById("champtable").innerHTML = dataHTML;
         }
+        
+        function Favourite() {
+            GetUserIDAlt();
+        }
+
+        function GetUserIDAlt(){
+            var username = getCookie('username');
+            var url = ("/User/ID");
+            console.log("invoked GetUserID username: " + username);
+            var formData = new FormData();
+            formData.append('username', username);
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {return response.json();
+        }).then(response => {
+                if(response.hasOwnProperty("Error"))
+            {alert(JSON.stringify(response));}else{
+                var json = JSON.stringify(response);
+                var obj = JSON.parse(json);
+                var userID = (JSON.parse(obj.UserID));
+                console.log("UserID");
+                console.log("returns :" + userID);
+                console.log("of type :" + typeof userID);
+                GetStatsIDAlt(userID);
+            }});
+        }
+
+        function GetStatsIDAlt(userID) {
+            console.log("invoked GetStatsID userID: " + userID);
+            var url = ("/Pages/statsID");
+
+            var formData = new FormData();
+            formData.append('userID', userID);
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {
+                return response.json();
+        }).then(response => {
+                if(response.hasOwnProperty("Error")){
+                alert(JSON.stringify(response));
+            }else{
+                console.log(response);
+                var json = JSON.stringify(response);
+                var obj = JSON.parse(json);
+                var statsID = (JSON.parse(obj.StatsID));
+                console.log("StatsID");
+                console.log("returns :" + statsID);
+                console.log("of type :" + typeof statsID);
+                FavouritePt2(userID,statsID)
+            }});
+        }
+
+
+        function FavouritePt2(userID,statsID) {
+            console.log("invoked AddrecentPt2"+userID+" "+statsID);
+
+            var url = ("/Pages/addFavourite");
+
+            var formData = new FormData();
+            formData.append('UserID', userID);
+            formData.append('StatsID', statsID);
+            formData.append('favourite', true);
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {
+                return response.json()
+            }).then(response => {
+                if (response.hasOwnProperty("Error")) {
+                alert(JSON.stringify(response));
+            } else {
+                alert("Page has been added to favourites.")
+            }
+        });
+
+        }
+
+        function Admincheck(){
+            console.log("invoked Admincheck() ");
+            AdminUserID();
+        }
+
+        function AdminUserID(){
+            var username = getCookie('username');
+            var url = ("/User/ID");
+            console.log("invoked GetUserID username: " + username);
+            var formData = new FormData();
+            formData.append('username', username);
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {return response.json();
+        }).then(response => {
+                if(response.hasOwnProperty("Error"))
+            {alert(JSON.stringify(response));}else{
+                var json = JSON.stringify(response);
+                var obj = JSON.parse(json);
+                var userID = (JSON.parse(obj.UserID));
+                console.log("UserID");
+                console.log("returns :" + userID);
+                console.log("of type :" + typeof userID);
+                IsAdmin(userID);
+            }});
+        }
+
+        function IsAdmin(userID){
+            console.log("invoked IsAdmin() userID: "+userID);
+            var username = getCookie('username');
+            var url = ("/User/IsAdmin");
+            console.log("invoked GetUserID username: " + username);
+            var formData = new FormData();
+            formData.append('username', username);
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {return response.json();
+        }).then(response => {
+                if(response.hasOwnProperty("Error"))
+            {alert(JSON.stringify(response));}else{
+                var json = JSON.stringify(response);
+                var obj = JSON.parse(json);
+                var Is = (JSON.parse(obj.UserID));
+                if(Is == "tru"){
+                    window.open("admin.html", "_self");
+                }
+                
+            }});
+        }
 
     </script>
 
@@ -331,6 +466,69 @@
             color: yellow;
             background-color: blue;
         }
+
+        #FavouriteButton {
+            border: 1px solid #000000;
+            alignment: center;
+            background-color: aqua;
+            padding-left: auto;
+            padding-right: 0;
+            margin-left: 0;
+            margin-right: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        #Favouritecontainer {
+            height: 50px;
+            position: relative;
+            float: right;
+            width: 18%;
+        }
+
+        #Favourite {
+            bottom: 10px;
+            left: 10px;
+            top: 10px;
+            right: 10px;
+            position: absolute;
+            width: 90%;
+            color: yellow;
+            background-color: blue;
+        }
+
+        #AdminButton {
+            border: 1px solid #000000;
+            alignment: center;
+            background-color: aqua;
+            padding-left: auto;
+            padding-right: 0;
+            margin-left: 0;
+            margin-right: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        #Admincontainer {
+            height: 50px;
+            position: relative;
+            float: right;
+            width: 18%;
+        }
+
+        #Admin {
+            bottom: 10px;
+            left: 10px;
+            top: 10px;
+            right: 10px;
+            position: absolute;
+            width: 90%;
+            color: yellow;
+            background-color: blue;
+        }
+
+
+
     </style>
 </head>
 <body onload="championStats()">
@@ -345,6 +543,18 @@
         ctx.fillText("League of Stats", c.width / 2, c.height - 20);
     </script>
 </canvas>
+
+<div id="Admincontainer">
+    <canvas onload="" id="AdminButton" width="200" height="50">
+    </canvas>
+    <input id="Admin" type="Button" value="Update?" onclick="Admincheck()">
+</div>
+
+<div id="Favouritecontainer">
+    <canvas onload="" id="FavouriteButton" width="200" height="50">
+    </canvas>
+    <input id="Favourite" type="Button" value="Favourite" onclick="Favourite()">
+</div>
 
 <div id="DropDownContainer" >
     <canvas onload="" id="DropdownBox" width="200" height="50">

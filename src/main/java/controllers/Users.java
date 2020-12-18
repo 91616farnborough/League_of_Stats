@@ -168,4 +168,22 @@ public class Users {
         }
     }
 
+    @POST
+    @Path("IsAdmin")
+    public String IsAdmin(@FormDataParam("UserID") Integer UserID) {
+        System.out.println("Invoked IsAdmin() on path User/IsAdmin"+UserID);
+        String query = "SELECT Admin FROM Users WHERE UserID='"+UserID+"'";
+        try (Statement stmt = Main.db.createStatement()) {
+            ResultSet results = stmt.executeQuery(query);
+            JSONObject row = new JSONObject();
+            row.put("Admin", results.getString(1));
+            System.out.println(row.toString());
+            return row.toString();
+        } catch (Exception exception) {
+            System.out.println("Database error: " + exception.getMessage());
+            return "{\"Error\": \"User is not authorised to update champion tables. User isn't an admin.\"}";
+        }
+    }
+
+
 }
