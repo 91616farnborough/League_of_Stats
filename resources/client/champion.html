@@ -372,11 +372,9 @@
 
         function IsAdmin(userID){
             console.log("invoked IsAdmin() userID: "+userID);
-            var username = getCookie('username');
             var url = ("/User/IsAdmin");
-            console.log("invoked GetUserID username: " + username);
             var formData = new FormData();
-            formData.append('username', username);
+            formData.append('UserID', userID);
 
             fetch(url, {
                 method: "POST",
@@ -387,13 +385,44 @@
             {alert(JSON.stringify(response));}else{
                 var json = JSON.stringify(response);
                 var obj = JSON.parse(json);
-                var Is = (JSON.parse(obj.UserID));
-                if(Is == "tru"){
+                console.log("Stuff "+typeof obj);
+                var Is = (obj.Admin);
+                if(Is !== undefined){
                     window.open("admin.html", "_self");
                 }
-                
             }});
         }
+
+        function AuthAdmin(){
+            for(var count = 1; count < )
+            var ans = prompt("Enter Admin password: ");
+            if(ans == "1234"){
+                SetAdmin();
+            }
+            else{
+                alert("INCORRECT 5 attempts remaining")
+            }
+        }
+
+        function SetAdmin(){
+            var username = getCookie('username');
+            var url = ("/User/SetAdmin");
+            console.log("invoked GetUserID username: " + username);
+            var formData = new FormData();
+            formData.append('username', username);
+            formData.append('Admin', "yes");
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {return response.json();
+        }).then(response => {
+                if(response.hasOwnProperty("Error"))
+            {alert(JSON.stringify(response));}else{
+                alert(JSON.stringify(response));
+            }});
+        }
+
+
 
     </script>
 
@@ -527,6 +556,36 @@
             background-color: blue;
         }
 
+        #MakeAdminButton {
+            border: 1px solid #000000;
+            alignment: center;
+            background-color: aqua;
+            padding-left: auto;
+            padding-right: 0;
+            margin-left: 0;
+            margin-right: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        #MakeAdmincontainer {
+            height: 50px;
+            position: relative;
+            float: right;
+            width: 18%;
+        }
+
+        #MakeAdmin {
+            bottom: 10px;
+            left: 10px;
+            top: 10px;
+            right: 10px;
+            position: absolute;
+            width: 90%;
+            color: yellow;
+            background-color: blue;
+        }
+
 
 
     </style>
@@ -543,6 +602,12 @@
         ctx.fillText("League of Stats", c.width / 2, c.height - 20);
     </script>
 </canvas>
+
+<div id="MakeAdmincontainer">
+    <canvas onload="" id="MakeAdminButton" width="200" height="50">
+    </canvas>
+    <input id="MakeAdmin" type="Button" value="Admin?" onclick="AuthAdmin()">
+</div>
 
 <div id="Admincontainer">
     <canvas onload="" id="AdminButton" width="200" height="50">

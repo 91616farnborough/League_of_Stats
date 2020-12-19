@@ -172,7 +172,7 @@ public class Users {
     @Path("IsAdmin")
     public String IsAdmin(@FormDataParam("UserID") Integer UserID) {
         System.out.println("Invoked IsAdmin() on path User/IsAdmin"+UserID);
-        String query = "SELECT Admin FROM Users WHERE UserID='"+UserID+"'";
+        String query = "SELECT Admin FROM Users WHERE UserID="+UserID;
         try (Statement stmt = Main.db.createStatement()) {
             ResultSet results = stmt.executeQuery(query);
             JSONObject row = new JSONObject();
@@ -183,6 +183,21 @@ public class Users {
             System.out.println("Database error: " + exception.getMessage());
             return "{\"Error\": \"User is not authorised to update champion tables. User isn't an admin.\"}";
         }
+    }
+
+    @POST
+    @Path("SetAdmin")
+    public String UserAdminAdd(@FormDataParam("username") String username , @FormDataParam("Admin") String Admin) {
+        System.out.println("Invoked User.UseAdminrAdd()");
+        try {
+            PreparedStatement ps = Main.db.prepareStatement("UPDATE Users SET Admin='"+Admin+"' WHERE UserName='"+username+"'");
+            ps.execute();
+            return "{\"OK\": \"Added User.\"}";
+        } catch (Exception exception) {
+            System.out.println("Database error: " + exception.getMessage());
+            return "{\"Error\": \"User is already an Admin\"}";
+        }
+
     }
 
 
