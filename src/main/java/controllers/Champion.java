@@ -217,6 +217,20 @@ public class Champion {
         }
     }
 
+    @POST
+    @Path("updatestats")
+    public String UserAdminAdd(@FormDataParam("ChampionID") Integer champID , @FormDataParam("Level") Integer level, @FormDataParam("Hp") Integer hp, @FormDataParam("Hpr") float hpr, @FormDataParam("Mp") Integer mp, @FormDataParam("Mpr") float mpr, @FormDataParam("AD") Integer ad, @FormDataParam("AP") Integer ap, @FormDataParam("PR") Integer pr, @FormDataParam("MR") Integer mr, @FormDataParam("As") float as, @FormDataParam("MS") Integer ms, @FormDataParam("Range") Integer range) {
+        System.out.println("Invoked champion.updatstats()");
+        try {
+            PreparedStatement ps = Main.db.prepareStatement("UPDATE Champions SET Hp ="+hp+" Hpr ="+hpr+" Mp="+mp+" Mpr="+mpr+" AttackSpeed="+as+" MS="+ms+" Range="+range+" WHERE ChampionID="+champID+" AND Level="+level);
+            ps.execute();
+            return "{\"OK\": \"Stats Updated\"}";
+        } catch (Exception exception) {
+            System.out.println("Database error: " + exception.getMessage());
+            return "{\"Error\": \"User stats invalid\"}";
+        }
+
+    }
 
 
 }

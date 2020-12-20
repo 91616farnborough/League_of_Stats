@@ -394,13 +394,17 @@
         }
 
         function AuthAdmin(){
-            for(var count = 1; count < )
-            var ans = prompt("Enter Admin password: ");
-            if(ans == "1234"){
-                SetAdmin();
-            }
-            else{
-                alert("INCORRECT 5 attempts remaining")
+            var count = 5;
+            var stop = false;
+            while( count > 0 && stop != true ) {
+                var ans = prompt("Enter Admin password: ");
+                if (ans == "1234") {
+                    SetAdmin();
+                    stop = true;
+                } else {
+                    alert("INCORRECT "+count+" attempts remaining");
+                }
+                count = count - 1;
             }
         }
 

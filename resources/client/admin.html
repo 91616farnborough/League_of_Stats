@@ -3,8 +3,611 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-</head>
-<body>
+    <script>
 
+        function championStats() {
+            var username = getCookie('username');
+            var url = ("/User/ID");
+            console.log("invoked UserID " + username);
+            var formData = new FormData();
+            formData.append('username', username);
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {return response.json();
+        }).then(response => {
+                if(response.hasOwnProperty("Error"))
+            {alert(JSON.stringify(response));}else{
+                var json = JSON.stringify(response);
+                var obj = JSON.parse(json);
+                var userID = (JSON.parse(obj.UserID));
+                console.log("UserID");
+                console.log("returns :" + userID);
+                console.log("of type :" + typeof userID);
+                PagesStatsID(userID);
+            }});
+        }
+
+        function PagesStatsID(userID) {
+            console.log("invoked statsID " + userID);
+            var url = ("/Pages/statsID");
+
+            var formData = new FormData();
+            formData.append('userID', userID);
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {
+                return response.json();
+        }).then(response => {
+                if(response.hasOwnProperty("Error")){
+                alert(JSON.stringify(response));
+            }else{
+                console.log(response);
+                var json = JSON.stringify(response);
+                var obj = JSON.parse(json);
+                var statsID = (JSON.parse(obj.StatsID));
+                console.log("StatsID");
+                console.log("returns :" + statsID);
+                console.log("of type :" + typeof statsID);
+                championGetall(statsID);
+            }});
+        }
+
+        function championGetall(statsID){
+            console.log("invoked getall "+statsID);
+            var url = ("/champion/getall");
+
+            var formData = new FormData();
+            formData.append('StatsID', statsID);
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {
+                return response.json();
+        }).then(response => {
+                if (response.hasOwnProperty("Error")){
+                alert(JSON.stringify(response));
+            } else {
+                console.log(response);
+                formatChampTable(response);
+            }
+        });
+        }
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for(var i = 0; i <ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        function formatChampTable(response){
+            let dataHTML = "";
+            for (let item of response) {
+                dataHTML = "<tr class='row'><td class='lev'>Level: "+item.Level+"</td><td class='item'>HP<input type='text' id='hp' value='"+item.Hp+"' ></td><td class='item'>HPr: <input type='text' id='hpr' value='"+item.Hpr+"' ></td><td class='item'>MP:<input type='text' id='mp' value='"+item.Mp+"' ></td><td class='item'>MPr: <input type='text' id='mpr' value='"+item.Mpr+"' ></td></tr><br>"+"<tr class='row'><td class='item'>AD: <input type='text' id='ad' value='"+item.AD+"' ></td><td class='item'>AP: <input type='text' id='ap' value='"+item.AP+"' ></td><td class='item'>PR: <input type='text' id='pr' value='"+item.PR+"' ></td><td class='item'>MR: <input type='text' id='mr' value='"+item.MR+"'></td></tr><br>"+"<tr class='row'><td class='item'>AS: <input type='text' id='as' value='"+item.AttackSpeed+"' ></td><td class='item'>MS: <input type='text' id='ms' value='"+item.MS+"' ></td><td class='item'>Range: <input type='text' id='range' value='"+item.Range+"' ></td></tr>";
+                var level = item.Level;
+                var ChampionID = (item.ChampionID);
+
+            }
+            console.log(typeof ChampionID);
+            var json = JSON.stringify(ChampionID);
+            var obj = JSON.parse(json);
+            console.log("obj: "+typeof obj);
+            document.getElementById("champtable").innerHTML = dataHTML;
+            defualtLevel(level,obj);
+        }
+
+        function defaultlist(obj){
+            console.log("Invoked defaultlist() ID: "+obj);
+
+            var url = ("/champion/Getname");
+
+            var formData = new FormData();
+            formData.append('ChampionID',obj);
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {
+                return response.json();
+        }).then(response => {
+                if (response.hasOwnProperty("Error")) {
+                alert(JSON.stringify(response));
+            } else {
+                formatabcList(response);
+            }
+        });
+        }
+
+        function formatabcList(response){
+            let dataHTML = "";
+            for (let item of response) {
+                dataHTML = "<tr class='container'><td><img width='350' height='300' src='" + item.imagePath + "'></td><td class='name'>" + item.name + "</td></tr> <br>";
+            }
+            document.getElementById("nametable").innerHTML = dataHTML;
+        }
+
+        function defualtLevel(Level,obj){
+            console.log("invoked defualtLevel");
+            document.getElementById("ddlLevel").value = Level;
+            defaultlist(obj);
+        }
+
+        function ChangeTable(){
+            GetUserID();
+        }
+
+
+        function GetUserID(){
+            var username = getCookie('username');
+            var url = ("/User/ID");
+            console.log("invoked GetUserID username: " + username);
+            var formData = new FormData();
+            formData.append('username', username);
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {return response.json();
+        }).then(response => {
+                if(response.hasOwnProperty("Error"))
+            {alert(JSON.stringify(response));}else{
+                var json = JSON.stringify(response);
+                var obj = JSON.parse(json);
+                var userID = (JSON.parse(obj.UserID));
+                console.log("UserID");
+                console.log("returns :" + userID);
+                console.log("of type :" + typeof userID);
+                GetStatsID(userID);
+            }});
+        }
+
+        function GetStatsID(userID) {
+            console.log("invoked GetStatsID userID: " + userID);
+            var url = ("/Pages/statsID");
+
+            var formData = new FormData();
+            formData.append('userID', userID);
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {
+                return response.json();
+        }).then(response => {
+                if(response.hasOwnProperty("Error")){
+                alert(JSON.stringify(response));
+            }else{
+                console.log(response);
+                var json = JSON.stringify(response);
+                var obj = JSON.parse(json);
+                var statsID = (JSON.parse(obj.StatsID));
+                console.log("StatsID");
+                console.log("returns :" + statsID);
+                console.log("of type :" + typeof statsID);
+                GetChampID(statsID);
+            }});
+        }
+
+        function GetChampID(statsID){
+            var url = ("/champion/GetChampID");
+            console.log("invoked GetChampID statsID: " + statsID);
+            var formData = new FormData();
+            formData.append('StatsID', statsID);
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {return response.json();
+        }).then(response => {
+                if(response.hasOwnProperty("Error")){
+                alert(JSON.stringify(response));
+            }else{
+                var json = JSON.stringify(response);
+                var obj = JSON.parse(json);
+                console.log(json);
+                console.log(typeof obj);
+                var championID = (JSON.parse(obj.ChampionID));
+                console.log("ChampID"+championID);
+                console.log("returns :" + championID);
+                console.log("of type :" + typeof championID);
+                GetStatsByLevel(championID);
+            }});
+        }
+
+        function GetStatsByLevel(championID){
+            console.log("invoked getallByLev ChampID: "+championID);
+            var url = ("/champion/Levelgetall");
+            var level = document.getElementById("ddlLevel").value;
+            console.log("Level: "+ level);
+            var formData = new FormData();
+            formData.append('ChampionID', championID);
+            formData.append('Level', level);
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {
+                return response.json();
+        }).then(response => {
+                if (response.hasOwnProperty("Error")){
+                alert(JSON.stringify(response));
+            } else {
+                console.log(response);
+                var Response = response;
+                formatNewChampTable(Response);
+            }
+        });
+        }
+
+        function formatNewChampTable(Response){
+            let dataHTML = "";
+            var level = document.getElementById("ddlLevel").value;
+            for (let item of Response) {
+                dataHTML = "<tr class='row'><td class='lev'>Level: "+level+"</td><td class='item'>HP<input type='text' id='hp' value='"+item.Hp+"' ></td><td class='item'>HPr: <input type='text' id='hpr' value='"+item.Hpr+"' ></td><td class='item'>MP:<input type='text' id='mp' value='"+item.Mp+"' ></td><td class='item'>MPr: <input type='text' id='mpr' value='"+item.Mpr+"' ></td></tr><br>"+"<tr class='row'><td class='item'>AD: <input type='text' id='ad' value='"+item.AD+"' ></td><td class='item'>AP: <input type='text' id='ap' value='"+item.AP+"' ></td><td class='item'>PR: <input type='text' id='pr' value='"+item.PR+"' ></td><td class='item'>MR: <input type='text' id='mr' value='"+item.MR+"'></td></tr><br>"+"<tr class='row'><td class='item'>AS: <input type='text' id='as' value='"+item.AttackSpeed+"' ></td><td class='item'>MS: <input type='text' id='ms' value='"+item.MS+"' ></td><td class='item'>Range: <input type='text' id='range' value='"+item.Range+"' ></td></tr>";
+            }
+            document.getElementById("champtable").innerHTML = dataHTML;
+        }
+
+        function Updatestats(){
+            GetUserIDforUpdate()
+        }
+
+        function GetUserIDforUpdate(){
+            var username = getCookie('username');
+            var url = ("/User/ID");
+            console.log("invoked GetUserID username: " + username);
+            var formData = new FormData();
+            formData.append('username', username);
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {return response.json();
+        }).then(response => {
+                if(response.hasOwnProperty("Error"))
+            {alert(JSON.stringify(response));}else{
+                var json = JSON.stringify(response);
+                var obj = JSON.parse(json);
+                var userID = (JSON.parse(obj.UserID));
+                console.log("UserID");
+                console.log("returns :" + userID);
+                console.log("of type :" + typeof userID);
+                GetStatsIDforUpdate(userID);
+            }});
+        }
+
+        function GetStatsIDforUpdate(userID) {
+            console.log("invoked GetStatsID userID: " + userID);
+            var url = ("/Pages/statsID");
+
+            var formData = new FormData();
+            formData.append('userID', userID);
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {
+                return response.json();
+        }).then(response => {
+                if(response.hasOwnProperty("Error")){
+                alert(JSON.stringify(response));
+            }else{
+                console.log(response);
+                var json = JSON.stringify(response);
+                var obj = JSON.parse(json);
+                var statsID = (JSON.parse(obj.StatsID));
+                console.log("StatsID");
+                console.log("returns :" + statsID);
+                console.log("of type :" + typeof statsID);
+                GetChampIDforUpdate(statsID);
+            }});
+        }
+
+        function GetChampIDforUpdate(statsID){
+            var url = ("/champion/GetChampID");
+            console.log("invoked GetChampID statsID: " + statsID);
+            var formData = new FormData();
+            formData.append('StatsID', statsID);
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {return response.json();
+        }).then(response => {
+                if(response.hasOwnProperty("Error")){
+                alert(JSON.stringify(response));
+            }else{
+                var json = JSON.stringify(response);
+                var obj = JSON.parse(json);
+                console.log(json);
+                console.log(typeof obj);
+                var championID = (JSON.parse(obj.ChampionID));
+                console.log("ChampID"+championID);
+                console.log("returns :" + championID);
+                console.log("of type :" + typeof championID);
+                UpdatestatsPt2(championID);
+            }});
+        }
+
+        function UpdatestatsPt2(championID){
+            let level = document.getElementById('ddlLevel').value;
+            let HP = document.getElementById('hp').value;
+            let HPr = document.getElementById('hpr').value;
+            let MP = document.getElementById('mp').value;
+            let MPr = document.getElementById('mpr').value;
+            let AD = document.getElementById('ad').value;
+            let AP = document.getElementById('ap').value;
+            let PR = document.getElementById('pr').value;
+            let MR = document.getElementById('mr').value;
+            let AS = document.getElementById('as').value;
+            let MS = document.getElementById('ms').value;
+            let Range = document.getElementById('range').value;
+
+            console.log("invoked Updatestats() with stats: Level: "+level+" Hp: "+HP+" Mp: "+MP+" Hpr: "+HPr+" Mpr: "+MPr+" AD: "+AD+" AP: "+AP+" PR: "+PR+" MR: "+MR+" AS: "+AS+" MS: "+MS+" Range: "+Range);
+
+            var url = ("/champion/updatestats");
+
+            var formData = new FormData();
+            formData.append('ChampionID', championID);
+            formData.append('level', level);
+            formData.append('Hp', HP);
+            formData.append('Hpr', HPr);
+            formData.append('Mp', MP);
+            formData.append('Mr', MPr);
+            formData.append('AD', AD);
+            formData.append('PR', PR);
+            formData.append('MR', MR);
+            formData.append('As', AS);
+            formData.append('MS', MS);
+            formData.append('Range', Range);
+
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {
+                return response.json()
+            }).then(response => {
+                if (response.hasOwnProperty("Error")) {
+                alert(JSON.stringify(response));
+            } else {
+                alert(JSON.stringify(response));
+                alert("Stats at level: "+level+" have been updated");
+            }
+        });
+        }
+
+
+
+
+
+    </script>
+
+    <style>
+        #myCanvas {
+            border: 1px solid #000000;
+            background-color: aqua;
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+        body{
+            background-color: blue;
+        }
+        .row{
+            border: black;
+            background-color: aqua;
+            width: 100%;
+            height: 50px;
+            text-align: center;
+            color: darkblue;
+        }
+        .item{
+            background-color: aqua;
+            color: darkblue;
+            font-size: 20px;
+        }
+        .lev{
+            color: yellow;
+            background-color: darkblue;
+        }
+        .container{
+            background-color: aqua;
+            border-radius: 100px;
+        }
+        .name{
+            text-align: center;
+            color: darkgoldenrod;
+            font-size: 100px;
+        }
+
+        #DropdownBox {
+            border: 1px solid #000000;
+            alignment: center;
+            background-color: aqua;
+            padding-left: auto;
+            padding-right: 0;
+            margin-left: 0;
+            margin-right: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        #DropDownContainer {
+            height: 50px;
+            position: relative;
+            float: right;
+            width: 18%;
+        }
+
+        #ddlLevel {
+            bottom: 10px;
+            left: 10px;
+            top: 10px;
+            right: 10px;
+            position: absolute;
+            width: 90%;
+            color: yellow;
+            background-color: blue;
+        }
+
+        #FavouriteButton {
+            border: 1px solid #000000;
+            alignment: center;
+            background-color: aqua;
+            padding-left: auto;
+            padding-right: 0;
+            margin-left: 0;
+            margin-right: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        #Favouritecontainer {
+            height: 50px;
+            position: relative;
+            float: right;
+            width: 18%;
+        }
+
+        #Favourite {
+            bottom: 10px;
+            left: 10px;
+            top: 10px;
+            right: 10px;
+            position: absolute;
+            width: 90%;
+            color: yellow;
+            background-color: blue;
+        }
+
+        #AdminButton {
+            border: 1px solid #000000;
+            alignment: center;
+            background-color: aqua;
+            padding-left: auto;
+            padding-right: 0;
+            margin-left: 0;
+            margin-right: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        #Admincontainer {
+            height: 50px;
+            position: relative;
+            float: right;
+            width: 18%;
+        }
+
+        #Admin {
+            bottom: 10px;
+            left: 10px;
+            top: 10px;
+            right: 10px;
+            position: absolute;
+            width: 90%;
+            color: yellow;
+            background-color: blue;
+        }
+
+        #MakeAdminButton {
+            border: 1px solid #000000;
+            alignment: center;
+            background-color: aqua;
+            padding-left: auto;
+            padding-right: 0;
+            margin-left: 0;
+            margin-right: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        #MakeAdmincontainer {
+            height: 50px;
+            position: relative;
+            float: right;
+            width: 18%;
+        }
+
+        #MakeAdmin {
+            bottom: 10px;
+            left: 10px;
+            top: 10px;
+            right: 10px;
+            position: absolute;
+            width: 90%;
+            color: yellow;
+            background-color: blue;
+        }
+
+
+
+    </style>
+</head>
+<body onload="championStats()">
+<canvas id="myCanvas" width="800%" height="100">
+    <script>
+        var c = document.getElementById("myCanvas");
+        var ctx = c.getContext("2d");
+        ctx.font = "90px Georgia";
+        ctx.fillStyle = "#FFFF00";
+        ctx.textAlign = "center";
+
+        ctx.fillText("League of Stats", c.width / 2, c.height - 20);
+    </script>
+</canvas>
+
+
+<div id="Admincontainer">
+    <canvas onload="" id="AdminButton" width="200" height="50">
+    </canvas>
+    <input id="Admin" type="Button" value="Confirm?" onclick="Updatestats()">
+</div>
+
+
+<div id="DropDownContainer" >
+    <canvas onload="" id="DropdownBox" width="200" height="50">
+    </canvas>
+    <select id="ddlLevel"  onchange="ChangeTable()">
+        <optgroup label="Levels"></optgroup>
+        <option value="1">Level 1</option>
+        <option value="2">Level 2</option>
+        <option value="3">Level 3</option>
+        <option value="4">Level 4</option>
+        <option value="5">Level 5</option>
+        <option value="6">Level 6</option>
+        <option value="7">Level 7</option>
+        <option value="8">Level 8</option>
+        <option value="9">Level 9</option>
+        <option value="10">Level 10</option>
+        <option value="11">Level 11</option>
+        <option value="12">Level 12</option>
+        <option value="13">Level 13</option>
+        <option value="14">Level 14</option>
+        <option value="15">Level 15</option>
+        <option value="16">Level 16</option>
+        <option value="17">Level 17</option>
+        <option value="18">Level 18</option>
+    </select>
+</div>
+
+
+<table id="nametable"></table>
+
+<table id="champtable" width="100%"></table>
 </body>
 </html>
