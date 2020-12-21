@@ -135,7 +135,7 @@
         function formatabcList(response){
             let dataHTML = "";
             for (let item of response) {
-                dataHTML = "<tr class='container'><td><img width='350' height='300' src='" + item.imagePath + "'></td><td class='name'>" + item.name + "</td></tr> <br>";
+                dataHTML = "<tr class='container'><td id='img'><img width='350' height='300' src='" + item.imagePath + "'></td><td id='name'>" + item.name + "</td></tr> <br>";
             }
             document.getElementById("nametable").innerHTML = dataHTML;
         }
@@ -360,12 +360,140 @@
 
             var formData = new FormData();
             formData.append('ChampionID', championID);
-            formData.append('level', level);
+            formData.append('Level', level);
             formData.append('Hp', HP);
             formData.append('Hpr', HPr);
             formData.append('Mp', MP);
-            formData.append('Mr', MPr);
+            formData.append('Mpr', MPr);
             formData.append('AD', AD);
+            formData.append('AP', AP);
+            formData.append('PR', PR);
+            formData.append('MR', MR);
+            formData.append('As', AS);
+            formData.append('MS', MS);
+            formData.append('Range', Range);
+
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {
+                return response.json()
+            }).then(response => {
+                if (response.hasOwnProperty("Error")) {
+                alert(JSON.stringify(response));
+            } else {
+                alert(JSON.stringify(response));
+                alert("Stats at level: "+lev+" have been updated");
+            }
+        });
+        }
+
+        function Newchamp() {
+            console.log("Make new champ template");
+            document.getElementById("hp").value ="";
+            document.getElementById("mp").value ="";
+            document.getElementById("hpr").value ="";
+            document.getElementById("mpr").value ="";
+            document.getElementById("ad").value ="";
+            document.getElementById("ap").value ="";
+            document.getElementById("mr").value ="";
+            document.getElementById("pr").value ="";
+            document.getElementById("as").value ="";
+            document.getElementById("ms").value ="";
+            document.getElementById("range").value ="";
+
+            document.getElementById("img").innerHTML = "<input id='imginputbox' type='text' value='img location'>";
+            document.getElementById("name").innerHTML = "<input id='nameinputbox' type='text' value='name'>";
+
+            var newchamp = document.getElementById("NewChampcontainer");
+            var newchamp = document.getElementById("NewChampcontainer");
+
+        }
+
+        function Addnewchamp(){
+            var name = document.getElementById("nameinputbox").value;
+            var img = document.getElementById("imginputbox").value;
+            console.log("invoked AddnewChamp name: "+name+" img: "+img);
+            var url = ("/champion/addnewchamp");
+            var formData = new FormData();
+            formData.append('name', name);
+            formData.append('img', img);
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {
+                return response.json();
+        }).then(response => {
+                if (response.hasOwnProperty("Error")){
+                alert(JSON.stringify(response));
+            } else {
+                console.log(response);
+                AddnewchampPt2();
+            }
+        });
+        }
+
+        function AddnewchampPt2(){
+            var name = document.getElementById("nameinputbox").value;
+            var img = document.getElementById("imginputbox").value;
+            console.log("invoked AddnewChamp name: "+name+" img: "+img);
+            var url = ("/champion/champtablegetchampID");
+            var formData = new FormData();
+            formData.append('name', name);
+            formData.append('img', img);
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {
+                return response.json();
+        }).then(response => {
+                if (response.hasOwnProperty("Error")){
+                alert(JSON.stringify(response));
+            } else {
+                console.log(response);
+                var json = JSON.stringify(response);
+                var obj = JSON.parse(json);
+                console.log(json);
+                console.log(typeof obj);
+                var championID = (JSON.parse(obj.ChampionID));
+                console.log("ChampID"+championID);
+                console.log("returns :" + championID);
+                console.log("of type :" + typeof championID);
+                AddnewchampPt3(championID);
+            }
+        });
+        }
+
+
+
+        function AddnewchampPt3(champID){
+            let level = document.getElementById('ddlLevel').value;
+            let HP = document.getElementById('hp').value;
+            let HPr = document.getElementById('hpr').value;
+            let MP = document.getElementById('mp').value;
+            let MPr = document.getElementById('mpr').value;
+            let AD = document.getElementById('ad').value;
+            let AP = document.getElementById('ap').value;
+            let PR = document.getElementById('pr').value;
+            let MR = document.getElementById('mr').value;
+            let AS = document.getElementById('as').value;
+            let MS = document.getElementById('ms').value;
+            let Range = document.getElementById('range').value;
+
+            console.log("invoked Updatestats() with stats: Level: "+level+" Hp: "+HP+" Mp: "+MP+" Hpr: "+HPr+" Mpr: "+MPr+" AD: "+AD+" AP: "+AP+" PR: "+PR+" MR: "+MR+" AS: "+AS+" MS: "+MS+" Range: "+Range);
+
+            var url = ("/champion/addchampionstats");
+
+            var formData = new FormData();
+            formData.append('ChampionID',champID);
+            formData.append('Level',level);
+            formData.append('Hp', HP);
+            formData.append('Hpr', HPr);
+            formData.append('Mp', MP);
+            formData.append('Mpr', MPr);
+            formData.append('AD', AD);
+            formData.append('AP', AP);
             formData.append('PR', PR);
             formData.append('MR', MR);
             formData.append('As', AS);
@@ -428,11 +556,21 @@
             background-color: aqua;
             border-radius: 100px;
         }
-        .name{
+        #name{
             text-align: center;
             color: darkgoldenrod;
             font-size: 100px;
+            width:70%;
+            height: 20%;
         }
+        #nameinputbox{
+            text-align: center;
+            color: darkgoldenrod;
+            font-size: 10%;
+            width:70%;
+            height: 20%;
+        }
+
 
         #DropdownBox {
             border: 1px solid #000000;
@@ -464,7 +602,7 @@
             background-color: blue;
         }
 
-        #FavouriteButton {
+        #confirmbutton {
             border: 1px solid #000000;
             alignment: center;
             background-color: aqua;
@@ -476,14 +614,14 @@
             width: 100%;
         }
 
-        #Favouritecontainer {
+        #confirmcontainer {
             height: 50px;
             position: relative;
             float: right;
             width: 18%;
         }
 
-        #Favourite {
+        #confirm {
             bottom: 10px;
             left: 10px;
             top: 10px;
@@ -494,7 +632,7 @@
             background-color: blue;
         }
 
-        #AdminButton {
+        #NewChampButton {
             border: 1px solid #000000;
             alignment: center;
             background-color: aqua;
@@ -506,14 +644,14 @@
             width: 100%;
         }
 
-        #Admincontainer {
+        #NewChampcontainer {
             height: 50px;
             position: relative;
             float: right;
             width: 18%;
         }
 
-        #Admin {
+        #NewChamp {
             bottom: 10px;
             left: 10px;
             top: 10px;
@@ -524,42 +662,15 @@
             background-color: blue;
         }
 
-        #MakeAdminButton {
-            border: 1px solid #000000;
-            alignment: center;
-            background-color: aqua;
-            padding-left: auto;
-            padding-right: 0;
-            margin-left: 0;
-            margin-right: 0;
-            height: 100%;
-            width: 100%;
-        }
 
-        #MakeAdmincontainer {
-            height: 50px;
-            position: relative;
-            float: right;
-            width: 18%;
-        }
 
-        #MakeAdmin {
-            bottom: 10px;
-            left: 10px;
-            top: 10px;
-            right: 10px;
-            position: absolute;
-            width: 90%;
-            color: yellow;
-            background-color: blue;
-        }
 
 
 
     </style>
 </head>
 <body onload="championStats()">
-<canvas id="myCanvas" width="800%" height="100">
+<canvas id="myCanvas" width="800%" height="100" >
     <script>
         var c = document.getElementById("myCanvas");
         var ctx = c.getContext("2d");
@@ -572,10 +683,17 @@
 </canvas>
 
 
-<div id="Admincontainer">
-    <canvas onload="" id="AdminButton" width="200" height="50">
+<div id="confirmcontainer" >
+    <canvas onload="" id="confirmbutton" width="200" height="50">
     </canvas>
-    <input id="Admin" type="Button" value="Confirm?" onclick="Updatestats()">
+    <input id="confirm" type="Button" value="Confirm?" onclick="Updatestats()">
+</div>
+
+
+<div id="NewChampcontainer" >
+    <canvas onload="" id="NewChampButton" width="200" height="50">
+    </canvas>
+    <input id="NewChamp" type="Button" value="New Champ?"  onclick="Newchamp()">
 </div>
 
 

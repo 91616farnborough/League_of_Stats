@@ -219,10 +219,35 @@ public class Champion {
 
     @POST
     @Path("updatestats")
-    public String UserAdminAdd(@FormDataParam("ChampionID") Integer champID , @FormDataParam("Level") Integer level, @FormDataParam("Hp") Integer hp, @FormDataParam("Hpr") float hpr, @FormDataParam("Mp") Integer mp, @FormDataParam("Mpr") float mpr, @FormDataParam("AD") Integer ad, @FormDataParam("AP") Integer ap, @FormDataParam("PR") Integer pr, @FormDataParam("MR") Integer mr, @FormDataParam("As") float as, @FormDataParam("MS") Integer ms, @FormDataParam("Range") Integer range) {
-        System.out.println("Invoked champion.updatstats()");
+    public String UpdateStats(@FormDataParam("ChampionID") Integer champID , @FormDataParam("Level") Integer level, @FormDataParam("Hp") Integer hp, @FormDataParam("Hpr") float hpr, @FormDataParam("Mp") Integer mp, @FormDataParam("Mpr") float mpr, @FormDataParam("AD") Integer ad, @FormDataParam("AP") Integer ap, @FormDataParam("PR") Integer pr, @FormDataParam("MR") Integer mr, @FormDataParam("As") float as, @FormDataParam("MS") Integer ms, @FormDataParam("Range") Integer range) {
+        System.out.println("Invoked champion.updatstats() ChampID "+champID);
+        System.out.println("Hp"+hp);
+        System.out.println("Mp"+mp);
+        System.out.println("mpr"+mpr);
+        System.out.println("hpr"+hpr);
+        System.out.println("as"+as);
+        System.out.println("ms"+ms);
+        System.out.println("ad"+ad);
+        System.out.println("ap"+ap);
+        System.out.println("pr"+pr);
+        System.out.println("mr"+mr);
+        System.out.println("range"+range);
+
         try {
-            PreparedStatement ps = Main.db.prepareStatement("UPDATE Champions SET Hp ="+hp+" Hpr ="+hpr+" Mp="+mp+" Mpr="+mpr+" AttackSpeed="+as+" MS="+ms+" Range="+range+" WHERE ChampionID="+champID+" AND Level="+level);
+            PreparedStatement ps = Main.db.prepareStatement("UPDATE Stats SET Hp=?, Hpr= ROUND(?,3), Mp=?, Mpr=ROUND(?,3), AD=?, AP=?, PR=?, MR=?, AttackSpeed=ROUND(?,3), MS=?, Range=? WHERE ChampionID=? AND Level=?");
+            ps.setInt(1, hp);
+            ps.setFloat(2, hpr);
+            ps.setInt(3, mp);
+            ps.setFloat(4, mpr);
+            ps.setInt(5, ad);
+            ps.setInt(6, ap);
+            ps.setInt(7, pr);
+            ps.setInt(8, mr);
+            ps.setFloat(9, as);
+            ps.setInt(10, ms);
+            ps.setInt(11, range);
+            ps.setInt(12, champID);
+            ps.setInt(13, level);
             ps.execute();
             return "{\"OK\": \"Stats Updated\"}";
         } catch (Exception exception) {
@@ -232,6 +257,82 @@ public class Champion {
 
     }
 
+    @POST
+    @Path("addchampionstats")
+    public String AddChampion(@FormDataParam("Level") Integer level, @FormDataParam("ChampionID") Integer champID,  @FormDataParam("Hp") Integer hp, @FormDataParam("Hpr") float hpr, @FormDataParam("Mp") Integer mp, @FormDataParam("Mpr") float mpr, @FormDataParam("AD") Integer ad, @FormDataParam("AP") Integer ap, @FormDataParam("PR") Integer pr, @FormDataParam("MR") Integer mr, @FormDataParam("As") float as, @FormDataParam("MS") Integer ms, @FormDataParam("Range") Integer range) {
+        System.out.println("Invoked champion.addchamp() ChampID ");
+        System.out.println("Hp"+hp);
+        System.out.println("Mp"+mp);
+        System.out.println("mpr"+mpr);
+        System.out.println("hpr"+hpr);
+        System.out.println("as"+as);
+        System.out.println("ms"+ms);
+        System.out.println("ad"+ad);
+        System.out.println("ap"+ap);
+        System.out.println("pr"+pr);
+        System.out.println("mr"+mr);
+        System.out.println("range"+range);
+
+        try {
+            PreparedStatement ps = Main.db.prepareStatement("INSERT INTO Stats VALUES ChampionID=? ,Level=? ,Hp=?, Hpr= ROUND(?,3), Mp=?, Mpr=ROUND(?,3), AD=?, AP=?, PR=?, MR=?, AttackSpeed=ROUND(?,3), MS=?, Range=?");
+            ps.setInt(1, champID);
+            ps.setInt(2, level);
+            ps.setInt(3, hp);
+            ps.setFloat(4, hpr);
+            ps.setInt(5, mp);
+            ps.setFloat(6, mpr);
+            ps.setInt(7, ad);
+            ps.setInt(8, ap);
+            ps.setInt(9, pr);
+            ps.setInt(10, mr);
+            ps.setFloat(11, as);
+            ps.setInt(12, ms);
+            ps.setInt(13, range);
+            ps.execute();
+            return "{\"OK\": \"Stats Updated\"}";
+        } catch (Exception exception) {
+            System.out.println("Database error: " + exception.getMessage());
+            return "{\"Error\": \"User stats invalid\"}";
+        }
+
+    }
+
+    @POST
+    @Path("addnewchamp")
+    public String champAdd(@FormDataParam("name") String name , @FormDataParam("img") String img) {
+        System.out.println("Invoked User.UserAdd()");
+        try {
+            PreparedStatement ps = Main.db.prepareStatement("INSERT INTO Champions (Name,Description,ReleaseDate,RecentUpdate,ImagePath ) VALUES (?,'waiting for implementation','waiting','waiting', ?)");
+            ps.setString(1, name);
+            ps.setString(2, img);
+            ps.execute();
+            return "{\"OK\": \"Added User.\"}";
+        } catch (Exception exception) {
+            System.out.println("Database error: " + exception.getMessage());
+            return "{\"Error\": \"UserName already taken\"}";
+        }
+
+    }
+
+    @POST
+    @Path("champtablegetchampID")
+    public String GetChampchampID (@FormDataParam("name") String name) {
+        System.out.println("Invoked champion.GetChampchampID() anme:"+name);
+
+        JSONArray response = new JSONArray();
+
+        String query ="SELECT ChampionID FROM Champions WHERE Name = '"+name+"'";
+        try (Statement stmt = Main.db.createStatement()) {
+            ResultSet results = stmt.executeQuery(query);
+            JSONObject row = new JSONObject();
+            row.put("ChampionID", results.getString(1));
+            System.out.println(row.toString());
+            return row.toString();
+        } catch (Exception exception) {
+            System.out.println("Database error: " + exception.getMessage());
+            return "{\"Error\": \"Unable to get item, please see server console for more info.\"}";
+        }
+    }
 
 }
 

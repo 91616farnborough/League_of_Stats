@@ -192,7 +192,7 @@ public class Users {
         try {
             PreparedStatement ps = Main.db.prepareStatement("UPDATE Users SET Admin='"+Admin+"' WHERE UserName='"+username+"'");
             ps.execute();
-            return "{\"OK\": \"Added User.\"}";
+            return "{\"OK\": \"User is now an admin.\"}";
         } catch (Exception exception) {
             System.out.println("Database error: " + exception.getMessage());
             return "{\"Error\": \"User is already an Admin\"}";
