@@ -259,8 +259,7 @@ public class Champion {
 
     @POST
     @Path("addchampionstats")
-    public String AddChampion(@FormDataParam("Level") Integer level, @FormDataParam("ChampionID") Integer champID,  @FormDataParam("Hp") Integer hp, @FormDataParam("Hpr") float hpr, @FormDataParam("Mp") Integer mp, @FormDataParam("Mpr") float mpr, @FormDataParam("AD") Integer ad, @FormDataParam("AP") Integer ap, @FormDataParam("PR") Integer pr, @FormDataParam("MR") Integer mr, @FormDataParam("As") float as, @FormDataParam("MS") Integer ms, @FormDataParam("Range") Integer range) {
-        System.out.println("Invoked champion.addchamp() ChampID ");
+    public String AddChampion(@FormDataParam("ChampionID") Integer champID,  @FormDataParam("Hp") Integer hp, @FormDataParam("Hpr") float hpr, @FormDataParam("Mp") Integer mp, @FormDataParam("Mpr") float mpr, @FormDataParam("AD") Integer ad, @FormDataParam("AP") Integer ap, @FormDataParam("PR") Integer pr, @FormDataParam("MR") Integer mr, @FormDataParam("As") float as, @FormDataParam("MS") Integer ms, @FormDataParam("Range") Integer range) {
         System.out.println("Hp"+hp);
         System.out.println("Mp"+mp);
         System.out.println("mpr"+mpr);
@@ -274,21 +273,24 @@ public class Champion {
         System.out.println("range"+range);
 
         try {
-            PreparedStatement ps = Main.db.prepareStatement("INSERT INTO Stats VALUES ChampionID=? ,Level=? ,Hp=?, Hpr= ROUND(?,3), Mp=?, Mpr=ROUND(?,3), AD=?, AP=?, PR=?, MR=?, AttackSpeed=ROUND(?,3), MS=?, Range=?");
-            ps.setInt(1, champID);
-            ps.setInt(2, level);
-            ps.setInt(3, hp);
-            ps.setFloat(4, hpr);
-            ps.setInt(5, mp);
-            ps.setFloat(6, mpr);
-            ps.setInt(7, ad);
-            ps.setInt(8, ap);
-            ps.setInt(9, pr);
-            ps.setInt(10, mr);
-            ps.setFloat(11, as);
-            ps.setInt(12, ms);
-            ps.setInt(13, range);
-            ps.execute();
+            for(int count = 1; count < 19; count++) {
+                PreparedStatement ps = Main.db.prepareStatement("INSERT INTO Stats (ChampionID , Level, Hp, Hpr, Mp, Mpr, AD, AP, PR, MR, AttackSpeed, MS, Range) VALUES  (? ,? ,?,(ROUND(?,3)),?,(ROUND(?,3)), ?, ?, ?, ?, (ROUND(?,3)), ?, ?)");
+                ps.setInt(1, champID);
+                ps.setInt(2, count);
+                ps.setInt(3, hp);
+                ps.setFloat(4, hpr);
+                ps.setInt(5, mp);
+                ps.setFloat(6, mpr);
+                ps.setInt(7, ad);
+                ps.setInt(8, ap);
+                ps.setInt(9, pr);
+                ps.setInt(10, mr);
+                ps.setFloat(11, as);
+                ps.setInt(12, ms);
+                ps.setInt(13, range);
+                System.out.println("Invoked champion.addchamp() ChampID: "+champID+" Level: "+count);
+                ps.execute();
+            }
             return "{\"OK\": \"Stats Updated\"}";
         } catch (Exception exception) {
             System.out.println("Database error: " + exception.getMessage());
@@ -300,18 +302,32 @@ public class Champion {
     @POST
     @Path("addnewchamp")
     public String champAdd(@FormDataParam("name") String name , @FormDataParam("img") String img) {
-        System.out.println("Invoked User.UserAdd()");
+        System.out.println("Invoked Champions.AddnewChamp()");
         try {
-            PreparedStatement ps = Main.db.prepareStatement("INSERT INTO Champions (Name,Description,ReleaseDate,RecentUpdate,ImagePath ) VALUES (?,'waiting for implementation','waiting','waiting', ?)");
-            ps.setString(1, name);
-            ps.setString(2, img);
-            ps.execute();
-            return "{\"OK\": \"Added User.\"}";
+            Statement stmt = Main.db.createStatement();
+            ResultSet results = stmt.executeQuery("SELECT Name FROM Champions WHERE Name = '"+name+"'");
+            JSONObject row = new JSONObject();
+            if (results.next()){
+                row.put("Name", results.getString(1));
+                System.out.println(row.toString());
+                String Name = row.toString();
+                if(Name.equals(name) != true){
+                    return "{\"Error\": \"Invalid input.\"}";
+                }
+                else {
+                    return "{\"Error\": \"name is already taken!\"}";
+                }
+            } else {
+                PreparedStatement ps = Main.db.prepareStatement("INSERT INTO Champions (Name,Description,ReleaseDate,RecentUpdate,ImagePath ) VALUES (?,'waiting for implementation','waiting','waiting', ?)");
+                ps.setString(1, name);
+                ps.setString(2, img);
+                ps.execute();
+                return "{\"OK\": \"Added champ.\"}";
+            }
         } catch (Exception exception) {
-            System.out.println("Database error: " + exception.getMessage());
-            return "{\"Error\": \"UserName already taken\"}";
+            System.out.println("Database error during /user/login: " + exception.getMessage());
+            return "{\"Error\": \"Server side error!\"}";
         }
-
     }
 
     @POST

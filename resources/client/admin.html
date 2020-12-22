@@ -2,10 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title >Title</title>
     <script>
 
+        function hide(){
+            console.log("hide()")
+            var Add = document.getElementById("AddChampcontainer");
+            Add.style.display ="none";
+        }
+
         function championStats() {
+            hide();
             var username = getCookie('username');
             var url = ("/User/ID");
             console.log("invoked UserID " + username);
@@ -407,8 +414,13 @@
             document.getElementById("name").innerHTML = "<input id='nameinputbox' type='text' value='name'>";
 
             var newchamp = document.getElementById("NewChampcontainer");
-            var newchamp = document.getElementById("NewChampcontainer");
-
+            var confirm = document.getElementById("confirmcontainer");
+            var ddbLevel = document.getElementById("DropDownContainer");
+            var Add = document.getElementById("AddChampcontainer");
+            Add.style.display ="block";
+            confirm.style.display = "none";
+            newchamp.style.display = "none";
+            ddbLevel.style.display = "none";
         }
 
         function Addnewchamp(){
@@ -465,10 +477,7 @@
         });
         }
 
-
-
         function AddnewchampPt3(champID){
-            let level = document.getElementById('ddlLevel').value;
             let HP = document.getElementById('hp').value;
             let HPr = document.getElementById('hpr').value;
             let MP = document.getElementById('mp').value;
@@ -481,13 +490,13 @@
             let MS = document.getElementById('ms').value;
             let Range = document.getElementById('range').value;
 
-            console.log("invoked Updatestats() with stats: Level: "+level+" Hp: "+HP+" Mp: "+MP+" Hpr: "+HPr+" Mpr: "+MPr+" AD: "+AD+" AP: "+AP+" PR: "+PR+" MR: "+MR+" AS: "+AS+" MS: "+MS+" Range: "+Range);
+            console.log("invoked Addstats() with stats: Level: "+1+" Hp: "+HP+" Mp: "+MP+" Hpr: "+HPr+" Mpr: "+MPr+" AD: "+AD+" AP: "+AP+" PR: "+PR+" MR: "+MR+" AS: "+AS+" MS: "+MS+" Range: "+Range);
 
             var url = ("/champion/addchampionstats");
 
             var formData = new FormData();
             formData.append('ChampionID',champID);
-            formData.append('Level',level);
+            formData.append('Level',1);
             formData.append('Hp', HP);
             formData.append('Hpr', HPr);
             formData.append('Mp', MP);
@@ -511,7 +520,7 @@
                 alert(JSON.stringify(response));
             } else {
                 alert(JSON.stringify(response));
-                alert("Stats at level: "+level+" have been updated");
+                alert("Stats at level: "+level+" have been updated to udate the rest of the levels go to the champion and update each level.");
             }
         });
         }
@@ -662,6 +671,35 @@
             background-color: blue;
         }
 
+        #AddChampButton {
+            border: 1px solid #000000;
+            alignment: center;
+            background-color: aqua;
+            padding-left: auto;
+            padding-right: 0;
+            margin-left: 0;
+            margin-right: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        #AddChampcontainer {
+            height: 50px;
+            position: relative;
+            float: right;
+            width: 18%;
+        }
+
+        #AddChamp {
+            bottom: 10px;
+            left: 10px;
+            top: 10px;
+            right: 10px;
+            position: absolute;
+            width: 90%;
+            color: yellow;
+            background-color: blue;
+        }
 
 
 
@@ -696,6 +734,11 @@
     <input id="NewChamp" type="Button" value="New Champ?"  onclick="Newchamp()">
 </div>
 
+<div id="AddChampcontainer" >
+    <canvas onload="" id="AddChampButton" width="200" height="50">
+    </canvas>
+    <input id="AddChamp" type="Button" value="Add?"  onclick="Addnewchamp()" >
+</div>
 
 <div id="DropDownContainer" >
     <canvas onload="" id="DropdownBox" width="200" height="50">
